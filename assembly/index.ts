@@ -71,21 +71,27 @@ export function add(routes: Node, route: string, id: i32): void {
 }
 
 export function match(routes: Node, url: string): i32 {
-  for (let i = 0; i < routes.children.length; i++) {
-    const child = routes.children[i];
+  let i = 0;
+  let node = routes;
+  let value = url;
 
-    const lcp = child.lcp(url);
+  while (node.children.length > i) {
+    const child = node.children[i++];
 
-    if (lcp == url.length - 1) {
+    const lcp = child.lcp(value);
+
+    // perfect match!
+    if (lcp == value.length - 1) {
       return child.id;
     }
 
+    // the child label is the prefix of value
     if (lcp == child.label.length - 1) {
-      return match(child, url.slice(lcp + 1));
-    }
-
-    // something in common, early return
-    if (lcp > -1) {
+      node = child;
+      i = 0;
+      value = value.slice(lcp + 1);
+    } else if (lcp > -1) {
+       // value and child.label shares some common prefix so no other child could be a match, exit
       return -1;
     }
   }
