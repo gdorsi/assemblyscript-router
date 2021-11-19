@@ -6,15 +6,15 @@ enum NodeType {
 class Node {
   id: i32;
   label: string;
-  children: Map<string, Node>;
+  children: Map<number, Node>;
   params: Array<Node>;
   type: NodeType;
 
   constructor(label: string, id: i32 = -1) {
-    const type = label.charAt(0) == ":" ? NodeType.PARAM : NodeType.STATIC;
+    const type = label.charCodeAt(0) == 58 /*:*/ ? NodeType.PARAM : NodeType.STATIC;
 
     this.params = new Array<Node>(0);
-    this.children = new Map<string, Node>();
+    this.children = new Map<number, Node>();
 
     this.label = label;
     this.id = id;
@@ -45,19 +45,15 @@ class Node {
     }
   }
 
-  get key(): string {
-    if (this.type === NodeType.STATIC) {
-      return this.label.charAt(0);
-    }
-
-    return this.label;
+  get key(): i32 {
+    return this.label.charCodeAt(0);
   }
 
   // Longest Common Prefix
-  lcp(label: string): i32 {
+  lcp(label: string, offset: i32 = 0): i32 {
     let k = 0;
 
-    while (label.charAt(k) == this.label.charAt(k) && label.length > k) {
+    while (label.charCodeAt(k + offset) == this.label.charCodeAt(k) && label.length > k + offset) {
       k++;
     }
 
@@ -65,7 +61,13 @@ class Node {
   }
 
   add(label: string, id: i32): void {
-    const key = label.charAt(0);
+    const key = label.charCodeAt(0);
+
+    // TODO multi match?
+    if (label == this.label) {
+      this.id = id;
+      return;
+    }
 
     if (this.children.has(key)) {
       const child = this.children.get(key);
@@ -111,7 +113,7 @@ class Node {
 }
 
 export function create(): Node {
-  return new Node("");
+  return new Node("/");
 }
 
 export function add(routes: Node, route: string, id: i32): void {
@@ -120,28 +122,32 @@ export function add(routes: Node, route: string, id: i32): void {
 
 export function match(routes: Node, url: string): i32 {
   let node = routes;
-  let value = url;
+  let i = 0;
+
+  if (routes.label == url) {
+    return routes.id;
+  }
 
   while (true) {
-    if (value.length == 0) {
+    if (url.length <= i) {
       return node.id;
     }
 
-    const key = value.charAt(0);
+    const key = url.charCodeAt(i);
 
     if (node.children.has(key)) {
       const child = node.children.get(key);
-      const lcp = child.lcp(value);
+      const lcp = child.lcp(url, i);
 
       // perfect match!
-      if (lcp == value.length) {
+      if (lcp == url.length - i) {
         return child.id;
       }
 
       // the child label is the prefix of value
       if (lcp == child.label.length) {
         node = child;
-        value = value.slice(lcp);
+        i += lcp;
       } else {
         // value and child.label shares some common prefix so no other child could be a match, exit
         return -1;
@@ -149,13 +155,13 @@ export function match(routes: Node, url: string): i32 {
     } else if (node.params.length) {
       //no regexp atm
       node = node.params[0];
-      const nextSlice = value.indexOf("/");
+      const nextSlice = url.indexOf("/", i);
 
       if (nextSlice === -1) {
         return node.id;
       }
 
-      value = value.slice(nextSlice);
+      i = nextSlice;
     } else {
       return -1;
     }

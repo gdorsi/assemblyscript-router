@@ -7,35 +7,35 @@ const wasmModule = loader.instantiateSync(
 const { __newString, __pin } = wasmModule.exports;
 
 class Router {
-  methods = new Map();
+  methods = {};
 
   on(method, url, callback) {
-    if (!this.methods.has(method)) {
-      const matcher = create();
+    if (!this.methods[method]) {
+      const matcher = wasmModule.exports.create();;
 
       __pin(matcher);
 
-      this.methods.set(method, {
+      this.methods[method] = {
         matcher,
         routes: [],
-      });
+      };
     }
 
-    const router = this.methods.get(method);
+    const router = this.methods[method];
     const id = router.routes.length;
 
     router.routes.push({ url, callback });
-    add(router.matcher, url, id);
+    wasmModule.exports.add(router.matcher, __newString(url), id);
   }
 
   lookup({ method, url }) {
-    const router = this.methods.get(method);
+    const router = this.methods[method];
 
-    if (!router) {
+    if (router === undefined) {
         return;
     }
 
-    const id = match(router.matcher, url);
+    const id = wasmModule.exports.match(router.matcher, __newString(url));
 
     if (id === -1) {
         return;
@@ -45,18 +45,6 @@ class Router {
 
     route.callback();
   }
-}
-
-function create() {
-  return wasmModule.exports.create();
-}
-
-function add(routes, route, id) {
-  return wasmModule.exports.add(routes, __newString(route), id);
-}
-
-function match(routes, url) {
-  return wasmModule.exports.match(routes, __newString(url));
 }
 
 module.exports = Router;

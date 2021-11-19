@@ -58,9 +58,9 @@ suite
   // .add('lookup dynamic multi-parametric route with regex', function () {
   //   router.lookup({ method: 'GET', url: '/at/12h00m', headers: { host: 'fastify.io' } }, null)
   // })
-  // .add('lookup long static route', function () {
-  //   router.lookup({ method: 'GET', url: '/abc/def/ghi/lmn/opq/rst/uvz', headers: { host: 'fastify.io' } }, null)
-  // })
+  .add('lookup long static route', function () {
+    router.lookup({ method: 'GET', url: '/abc/def/ghi/lmn/opq/rst/uvz', headers: { host: 'fastify.io' } }, null)
+  })
   // .add('lookup long dynamic route', function () {
   //   router.lookup({ method: 'GET', url: '/user/qwertyuiopasdfghjklzxcvbnm/static', headers: { host: 'fastify.io' } }, null)
   // })
