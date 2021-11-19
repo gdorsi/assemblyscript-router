@@ -8,6 +8,10 @@ class Node {
     this.id = id;
   }
 
+  get charCodeAt0(): i32 {
+    return this.label.charCodeAt(0);
+  }
+
   // Longest Common Prefix
   lcp(label: string): i32 {
     let k = 0;
@@ -20,12 +24,18 @@ class Node {
   }
 
   add(label: string, id: i32): void {
-    // TODO sorting
-    for (let i = 0; i < this.children.length; i++) {
-      const child = this.children[i];
-      const lcp = child.lcp(label);
+    let start = 0;
+    let end = this.children.length - 1;
+    const charCodeAt0 = label.charCodeAt(0);
 
-      if (lcp > -1) {
+    // binary search
+    while (start <= end) {
+      const i: i32 = Math.floor((start + end) / 2) as i32;
+
+      const child = this.children[i];
+
+      if (child.charCodeAt0 == charCodeAt0) {
+        const lcp = child.lcp(label);
         const sliceI = lcp + 1;
 
         if (lcp == child.label.length - 1) {
@@ -39,16 +49,34 @@ class Node {
 
         child.label = child.label.slice(sliceI);
 
-        parent.children.push(sibling);
-        parent.children.push(child);
+        if (sibling.charCodeAt0 < child.charCodeAt0) {
+          parent.children.push(sibling);
+          parent.children.push(child);
+        } else {
+          parent.children.push(child);
+          parent.children.push(sibling);
+        }
 
         //replace
         this.children[i] = parent;
         return;
+      } else if (child.charCodeAt0 < charCodeAt0) {
+        start = i + 1;
+      } else {
+        end = i - 1;
       }
     }
 
     this.children.push(new Node(label, id));
+
+    let pos = this.children.length - 1;
+
+    // places the new elment in the right position
+    while (pos > end && pos > 0) {
+      let temp = this.children[pos];
+      this.children[pos] = this.children[pos - 1];
+      this.children[pos - 1] = temp;
+    }
   }
 
   toString(lvl: i32 = 0): string {
@@ -71,28 +99,41 @@ export function add(routes: Node, route: string, id: i32): void {
 }
 
 export function match(routes: Node, url: string): i32 {
-  let i = 0;
   let node = routes;
   let value = url;
 
-  while (node.children.length > i) {
-    const child = node.children[i++];
+  let start = 0;
+  let end = node.children.length - 1;
 
-    const lcp = child.lcp(value);
+  // binary search
+  while (start <= end) {
+    const i: i32 = Math.floor((start + end) / 2) as i32;
+    const charCodeAt0 = value.charCodeAt(0);
 
-    // perfect match!
-    if (lcp == value.length - 1) {
-      return child.id;
-    }
+    const child = node.children[i];
 
-    // the child label is the prefix of value
-    if (lcp == child.label.length - 1) {
-      node = child;
-      i = 0;
-      value = value.slice(lcp + 1);
-    } else if (lcp > -1) {
-       // value and child.label shares some common prefix so no other child could be a match, exit
-      return -1;
+    if (child.charCodeAt0 == charCodeAt0) {
+      const lcp = child.lcp(value);
+
+      // perfect match!
+      if (lcp == value.length - 1) {
+        return child.id;
+      }
+
+      // the child label is the prefix of value
+      if (lcp == child.label.length - 1) {
+        node = child;
+        start = 0;
+        end = node.children.length - 1;
+        value = value.slice(lcp + 1);
+      } else {
+        // value and child.label shares some common prefix so no other child could be a match, exit
+        return -1;
+      }
+    } else if (child.charCodeAt0 < charCodeAt0) {
+      start = i + 1;
+    } else {
+      end = i - 1;
     }
   }
 
