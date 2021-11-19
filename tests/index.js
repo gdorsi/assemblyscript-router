@@ -1,4 +1,7 @@
-const assert = require("assert");
+"use strict";
+
+const t = require("tap");
+const test = t.test;
 const Router = require("..");
 
 const testRoutes = [
@@ -12,28 +15,57 @@ const testRoutes = [
   "/v2/domain/task/",
 ];
 
-const router = new Router();
+test("matches the url when declared", (t) => {
+  t.plan(1);
 
-const noop = () => {};
+  const router = new Router();
 
-for (let route of testRoutes) {
-  router.on("GET", route, noop);
-}
+  router.on("GET", "/example", function handle() {
+    t.ok(true);
+  });
 
-let matched = false;
-
-router.on("GET", "/v1/domain/test", () => {
-  matched = true;
+  router.lookup({ method: "GET", url: "/example", headers: {} }, null);
 });
 
-router.lookup({ method: "GET", url: "/v1/domain/test" });
+test("matches the url when a bunch of routes are declared", (t) => {
+  t.plan(1);
 
-assert.strictEqual(matched, true);
+  const router = new Router();
 
-matched = false;
+  const noop = () => {};
 
-router.lookup({ method: "GET", url: "/v1/domain/not-found" });
+  for (let route of testRoutes) {
+    router.on("GET", route, noop);
+  }
 
-assert.strictEqual(matched, false);
+  router.on("GET", "/v1/domain/test", function handle() {
+    t.ok(true);
+  });
 
-console.log("ok");
+  router.lookup({ method: "GET", url: "/v1/domain/test", headers: {} }, null);
+});
+
+test("doesn't match the url when there isn't any relative route declared", (t) => {
+  t.plan(1);
+  
+  const router = new Router();
+
+  const noop = () => {};
+
+  for (let route of testRoutes) {
+    router.on("GET", route, noop);
+  }
+
+  let matched = false;
+
+  router.on("GET", "/v1/domain/test", function handle() {
+    matched = true;
+  });
+
+  router.lookup(
+    { method: "GET", url: "/v1/domain/test-not-found", headers: {} },
+    null
+  );
+
+  t.notOk(matched);
+});

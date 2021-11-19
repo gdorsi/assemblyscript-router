@@ -10,7 +10,8 @@
     "@assemblyscript/loader": "^0.19.20"
   },
   "devDependencies": {
-    "assemblyscript": "^0.19.20"
+    "assemblyscript": "^0.19.20",
+    "tap": "^15.1.2"
   },
   "version": "1.0.0",
   "main": "index.js",
