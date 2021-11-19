@@ -3274,16 +3274,20 @@
     local.get $5
     local.get $1
     call $assembly/index/Node#lcp
-    local.tee $4
+    local.tee $6
     i32.const 0
     i32.ge_s
     if
+     local.get $6
+     i32.const 1
+     i32.add
+     local.set $4
      global.get $~lib/memory/__stack_pointer
      local.get $5
      i32.load offset=4
-     local.tee $6
+     local.tee $7
      i32.store
-     local.get $6
+     local.get $7
      i32.const 20
      i32.sub
      i32.load offset=16
@@ -3291,13 +3295,11 @@
      i32.shr_u
      i32.const 1
      i32.sub
-     local.get $4
+     local.get $6
      i32.eq
      if
       local.get $1
       local.get $4
-      i32.const 1
-      i32.add
       i32.const 2147483647
       call $~lib/string/String#slice
       local.set $0
@@ -3318,9 +3320,6 @@
      local.get $1
      i32.const 0
      local.get $4
-     i32.const 1
-     i32.add
-     local.tee $4
      call $~lib/string/String#slice
      local.tee $6
      i32.store offset=12
@@ -3332,45 +3331,44 @@
      local.tee $6
      i32.store offset=16
      global.get $~lib/memory/__stack_pointer
-     local.get $5
-     i32.load offset=4
-     local.tee $7
-     i32.store
-     local.get $5
-     local.get $7
+     local.get $1
      local.get $4
      i32.const 2147483647
      call $~lib/string/String#slice
-     local.tee $7
+     local.set $1
+     global.get $~lib/memory/__stack_pointer
+     local.get $1
+     i32.store offset=8
+     local.get $1
+     local.get $2
+     call $assembly/index/Node#constructor
+     local.tee $1
+     i32.store offset=20
+     global.get $~lib/memory/__stack_pointer
+     local.get $5
+     i32.load offset=4
+     local.tee $2
+     i32.store
+     local.get $5
+     local.get $2
+     local.get $4
+     i32.const 2147483647
+     call $~lib/string/String#slice
+     local.tee $2
      i32.store offset=4
-     local.get $7
+     local.get $2
      if
       local.get $5
-      local.get $7
+      local.get $2
       i32.const 0
       call $byn-split-outlined-A$~lib/rt/itcms/__link
      end
      global.get $~lib/memory/__stack_pointer
      local.get $6
      i32.load offset=8
-     local.tee $7
+     local.tee $2
      i32.store
-     local.get $1
-     local.get $4
-     i32.const 2147483647
-     call $~lib/string/String#slice
-     local.set $1
-     global.get $~lib/memory/__stack_pointer
-     local.get $1
-     i32.store offset=20
-     local.get $1
      local.get $2
-     call $assembly/index/Node#constructor
-     local.set $1
-     global.get $~lib/memory/__stack_pointer
-     local.get $1
-     i32.store offset=8
-     local.get $7
      local.get $1
      call $~lib/array/Array<assembly/index/Node>#push
      global.get $~lib/memory/__stack_pointer
