@@ -2,14 +2,12 @@
   "targets": {
     "debug": {
       "binaryFile": "build/untouched.wasm",
-      "textFile": "build/untouched.wat",
       "exportRuntime": true,
       "sourceMap": true,
       "debug": true
     },
     "release": {
       "binaryFile": "build/optimized.wasm",
-      "textFile": "build/optimized.wat",
       "exportRuntime": true,
       "sourceMap": true,
       "optimizeLevel": 3,
