@@ -4,15 +4,19 @@ const wasmModule = loader.instantiateSync(
   fs.readFileSync(__dirname + "/build/optimized.wasm")
 );
 
-const { __newString } = wasmModule.exports;
+const { __newString, __pin } = wasmModule.exports;
 
 class Router {
   methods = new Map();
 
   on(method, url, callback) {
     if (!this.methods.has(method)) {
+      const matcher = create();
+
+      __pin(matcher);
+
       this.methods.set(method, {
-        matcher: create(),
+        matcher,
         routes: [],
       });
     }

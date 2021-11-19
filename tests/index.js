@@ -9,13 +9,14 @@ const testRoutes = [
   "/v1/domain/user/",
   "/v1/domain/tasks/",
   "/v1/domain/task/",
+  "/v1/param/:name/",
   "/v2/domain/users/",
   "/v2/domain/user/",
   "/v2/domain/tasks/",
   "/v2/domain/task/",
 ];
 
-test("matches the url when declared", (t) => {
+test("matches the url when declared as route", (t) => {
   t.plan(1);
 
   const router = new Router();
@@ -25,6 +26,30 @@ test("matches the url when declared", (t) => {
   });
 
   router.lookup({ method: "GET", url: "/example", headers: {} }, null);
+});
+
+test("matches the url when declared as param route", (t) => {
+  t.plan(1);
+
+  const router = new Router();
+
+  router.on("GET", "/example/:name/", function handle() {
+    t.ok(true);
+  });
+
+  router.lookup({ method: "GET", url: "/example/guido/", headers: {} }, null);
+});
+
+test("matches the url when declared as param route 2", (t) => {
+  t.plan(1);
+
+  const router = new Router();
+
+  router.on("GET", "/example/:name", function handle() {
+    t.ok(true);
+  });
+
+  router.lookup({ method: "GET", url: "/example/guido", headers: {} }, null);
 });
 
 test("matches the url when a bunch of routes are declared", (t) => {
