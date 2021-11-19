@@ -1,0 +1,31 @@
+{
+  "name": "find-my-way-wasm",
+  "scripts": {
+    "asbuild:untouched": "asc assembly/index.ts --target debug --exportRuntime",
+    "asbuild:optimized": "asc assembly/index.ts --target release --exportRuntime",
+    "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
+    "test": "node tests"
+  },
+  "dependencies": {
+    "@assemblyscript/loader": "^0.19.20"
+  },
+  "devDependencies": {
+    "assemblyscript": "^0.19.20"
+  },
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/delvedor/find-my-way.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/delvedor/find-my-way/issues"
+  },
+  "homepage": "https://github.com/delvedor/find-my-way#readme",
+  "description": ""
+}
