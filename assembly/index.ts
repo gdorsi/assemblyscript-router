@@ -8,7 +8,7 @@ class Node {
     this.id = id;
   }
 
-  get charAt0(): string {
+  get key(): string {
     return this.label.charAt(0);
   }
 
@@ -20,37 +20,36 @@ class Node {
       k++;
     }
 
-    return k - 1;
+    return k;
   }
 
   add(label: string, id: i32): void {
-    const charAt0 = label.charAt(0);
+    const key = label.charAt(0);
 
-    if (this.children.has(charAt0)) {
-      const child = this.children.get(charAt0);
+    if (this.children.has(key)) {
+      const child = this.children.get(key);
       const lcp = child.lcp(label);
-      const sliceI = lcp + 1;
 
       if (lcp == child.label.length - 1) {
-        child.add(label.slice(sliceI), id);
+        child.add(label.slice(lcp), id);
         return;
       }
 
-      const prefix = label.slice(0, sliceI);
-        const parent = new Node(prefix);
-        const sibling = new Node(label.slice(sliceI), id);
+      const prefix = label.slice(0, lcp);
+      const parent = new Node(prefix);
+      const sibling = new Node(label.slice(lcp), id);
 
-        child.label = child.label.slice(sliceI);
+      child.label = child.label.slice(lcp);
 
-        parent.children.set(sibling.charAt0, sibling);
-        parent.children.set(child.charAt0, child);
+      parent.children.set(sibling.key, sibling);
+      parent.children.set(child.key, child);
 
-        //replace
-        this.children.set(charAt0, parent);
-        return;
+      //replace
+      this.children.set(key, parent);
+      return;
     }
 
-    this.children.set(charAt0, new Node(label, id));
+    this.children.set(key, new Node(label, id));
   }
 
   toString(lvl: i32 = 0): string {
@@ -79,21 +78,21 @@ export function match(routes: Node, url: string): i32 {
   let value = url;
 
   while (true) {
-    const charAt0 = value.charAt(0);
+    const key = value.charAt(0);
 
-    if (node.children.has(charAt0)) {
-      const child = node.children.get(charAt0);
+    if (node.children.has(key)) {
+      const child = node.children.get(key);
       const lcp = child.lcp(value);
 
       // perfect match!
-      if (lcp == value.length - 1) {
+      if (lcp == value.length) {
         return child.id;
       }
 
       // the child label is the prefix of value
-      if (lcp == child.label.length - 1) {
+      if (lcp == child.label.length) {
         node = child;
-        value = value.slice(lcp + 1);
+        value = value.slice(lcp);
       } else {
         // value and child.label shares some common prefix so no other child could be a match, exit
         return -1;

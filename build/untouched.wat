@@ -4844,8 +4844,6 @@
    end
   end
   local.get $2
-  i32.const 1
-  i32.sub
   local.set $4
   global.get $~lib/memory/__stack_pointer
   i32.const 12
@@ -4853,7 +4851,7 @@
   global.set $~lib/memory/__stack_pointer
   local.get $4
  )
- (func $assembly/index/Node#get:charAt0 (param $0 i32) (result i32)
+ (func $assembly/index/Node#get:key (param $0 i32) (result i32)
   (local $1 i32)
   global.get $~lib/memory/__stack_pointer
   i32.const 4
@@ -4887,7 +4885,6 @@
   (local $7 i32)
   (local $8 i32)
   (local $9 i32)
-  (local $10 i32)
   global.get $~lib/memory/__stack_pointer
   i32.const 32
   i32.sub
@@ -4913,22 +4910,22 @@
   i32.store
   local.get $0
   i32.load offset=8
-  local.set $10
+  local.set $9
   global.get $~lib/memory/__stack_pointer
-  local.get $10
+  local.get $9
   i32.store offset=4
-  local.get $10
+  local.get $9
   local.get $3
   call $~lib/map/Map<~lib/string/String,assembly/index/Node>#has
   if
    global.get $~lib/memory/__stack_pointer
    local.get $0
    i32.load offset=8
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
+   local.get $9
    local.get $3
    call $~lib/map/Map<~lib/string/String,assembly/index/Node>#get
    local.tee $4
@@ -4938,17 +4935,13 @@
    call $assembly/index/Node#lcp
    local.set $5
    local.get $5
-   i32.const 1
-   i32.add
-   local.set $6
-   local.get $5
    local.get $4
    i32.load offset=4
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
+   local.get $9
    call $~lib/string/String#get:length
    i32.const 1
    i32.sub
@@ -4956,14 +4949,14 @@
    if
     local.get $4
     local.get $1
-    local.get $6
+    local.get $5
     global.get $~lib/builtins/i32.MAX_VALUE
     call $~lib/string/String#slice
-    local.set $10
+    local.set $9
     global.get $~lib/memory/__stack_pointer
-    local.get $10
+    local.get $9
     i32.store offset=12
-    local.get $10
+    local.get $9
     local.get $2
     call $assembly/index/Node#add
     global.get $~lib/memory/__stack_pointer
@@ -4975,89 +4968,89 @@
    global.get $~lib/memory/__stack_pointer
    local.get $1
    i32.const 0
-   local.get $6
+   local.get $5
    call $~lib/string/String#slice
-   local.tee $7
+   local.tee $6
    i32.store offset=16
    global.get $~lib/memory/__stack_pointer
    i32.const 0
-   local.get $7
+   local.get $6
    i32.const 1
    global.set $~argumentsLength
    i32.const 0
    call $assembly/index/Node#constructor@varargs
-   local.tee $8
+   local.tee $7
    i32.store offset=20
    global.get $~lib/memory/__stack_pointer
    i32.const 0
    local.get $1
-   local.get $6
+   local.get $5
    global.get $~lib/builtins/i32.MAX_VALUE
    call $~lib/string/String#slice
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=12
-   local.get $10
+   local.get $9
    local.get $2
    call $assembly/index/Node#constructor
-   local.tee $9
+   local.tee $8
    i32.store offset=24
    local.get $4
    local.get $4
    i32.load offset=4
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
-   local.get $6
+   local.get $9
+   local.get $5
    global.get $~lib/builtins/i32.MAX_VALUE
    call $~lib/string/String#slice
    call $assembly/index/Node#set:label
-   local.get $8
+   local.get $7
    i32.load offset=8
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
    local.get $9
-   call $assembly/index/Node#get:charAt0
-   local.set $10
+   local.get $8
+   call $assembly/index/Node#get:key
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
-   i32.store offset=12
-   local.get $10
    local.get $9
+   i32.store offset=12
+   local.get $9
+   local.get $8
    call $~lib/map/Map<~lib/string/String,assembly/index/Node>#set
    drop
-   local.get $8
+   local.get $7
    i32.load offset=8
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
+   local.get $9
    local.get $4
-   call $assembly/index/Node#get:charAt0
-   local.set $10
+   call $assembly/index/Node#get:key
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=12
-   local.get $10
+   local.get $9
    local.get $4
    call $~lib/map/Map<~lib/string/String,assembly/index/Node>#set
    drop
    local.get $0
    i32.load offset=8
-   local.set $10
+   local.set $9
    global.get $~lib/memory/__stack_pointer
-   local.get $10
+   local.get $9
    i32.store offset=4
-   local.get $10
+   local.get $9
    local.get $3
-   local.get $8
+   local.get $7
    call $~lib/map/Map<~lib/string/String,assembly/index/Node>#set
    drop
    global.get $~lib/memory/__stack_pointer
@@ -5068,21 +5061,21 @@
   end
   local.get $0
   i32.load offset=8
-  local.set $10
+  local.set $9
   global.get $~lib/memory/__stack_pointer
-  local.get $10
+  local.get $9
   i32.store offset=4
-  local.get $10
+  local.get $9
   local.get $3
   i32.const 0
   local.get $1
   local.get $2
   call $assembly/index/Node#constructor
-  local.set $10
+  local.set $9
   global.get $~lib/memory/__stack_pointer
-  local.get $10
+  local.get $9
   i32.store offset=28
-  local.get $10
+  local.get $9
   call $~lib/map/Map<~lib/string/String,assembly/index/Node>#set
   drop
   global.get $~lib/memory/__stack_pointer
@@ -5153,8 +5146,6 @@
      local.get $7
      local.get $3
      call $~lib/string/String#get:length
-     i32.const 1
-     i32.sub
      i32.eq
      if
       local.get $6
@@ -5176,8 +5167,6 @@
      i32.store offset=4
      local.get $8
      call $~lib/string/String#get:length
-     i32.const 1
-     i32.sub
      i32.eq
      if
       local.get $6
@@ -5185,8 +5174,6 @@
       global.get $~lib/memory/__stack_pointer
       local.get $3
       local.get $7
-      i32.const 1
-      i32.add
       global.get $~lib/builtins/i32.MAX_VALUE
       call $~lib/string/String#slice
       local.tee $3
