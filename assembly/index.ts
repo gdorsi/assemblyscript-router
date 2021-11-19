@@ -1,15 +1,15 @@
 class Node {
   id: i32;
   label: string;
-  children: Array<Node> = new Array<Node>(0);
+  children: Map<string, Node> = new Map<string, Node>();
 
   constructor(label: string, id: i32 = -1) {
     this.label = label;
     this.id = id;
   }
 
-  get charCodeAt0(): i32 {
-    return this.label.charCodeAt(0);
+  get charAt0(): string {
+    return this.label.charAt(0);
   }
 
   // Longest Common Prefix
@@ -24,66 +24,42 @@ class Node {
   }
 
   add(label: string, id: i32): void {
-    let start = 0;
-    let end = this.children.length - 1;
-    const charCodeAt0 = label.charCodeAt(0);
+    const charAt0 = label.charAt(0);
 
-    // binary search
-    while (start <= end) {
-      const i: i32 = Math.floor((start + end) / 2) as i32;
+    if (this.children.has(charAt0)) {
+      const child = this.children.get(charAt0);
+      const lcp = child.lcp(label);
+      const sliceI = lcp + 1;
 
-      const child = this.children[i];
+      if (lcp == child.label.length - 1) {
+        child.add(label.slice(sliceI), id);
+        return;
+      }
 
-      if (child.charCodeAt0 == charCodeAt0) {
-        const lcp = child.lcp(label);
-        const sliceI = lcp + 1;
-
-        if (lcp == child.label.length - 1) {
-          child.add(label.slice(sliceI), id);
-          return;
-        }
-
-        const prefix = label.slice(0, sliceI);
+      const prefix = label.slice(0, sliceI);
         const parent = new Node(prefix);
         const sibling = new Node(label.slice(sliceI), id);
 
         child.label = child.label.slice(sliceI);
 
-        if (sibling.charCodeAt0 < child.charCodeAt0) {
-          parent.children.push(sibling);
-          parent.children.push(child);
-        } else {
-          parent.children.push(child);
-          parent.children.push(sibling);
-        }
+        parent.children.set(sibling.charAt0, sibling);
+        parent.children.set(child.charAt0, child);
 
         //replace
-        this.children[i] = parent;
+        this.children.set(charAt0, parent);
         return;
-      } else if (child.charCodeAt0 < charCodeAt0) {
-        start = i + 1;
-      } else {
-        end = i - 1;
-      }
     }
 
-    this.children.push(new Node(label, id));
-
-    let pos = this.children.length - 1;
-
-    // places the new elment in the right position
-    while (pos > end && pos > 0) {
-      let temp = this.children[pos];
-      this.children[pos] = this.children[pos - 1];
-      this.children[pos - 1] = temp;
-    }
+    this.children.set(charAt0, new Node(label, id));
   }
 
   toString(lvl: i32 = 0): string {
     let str = this.label + " " + lvl.toString() + " | ";
 
-    for (let i = 0; i < this.children.length; i++) {
-      str += this.children[i].toString(lvl + 1);
+    let children = this.children.values();
+
+    for (let i = 0; i < children.length; i++) {
+      str += children[i].toString(lvl + 1);
     }
 
     return str;
@@ -102,17 +78,11 @@ export function match(routes: Node, url: string): i32 {
   let node = routes;
   let value = url;
 
-  let start = 0;
-  let end = node.children.length - 1;
+  while (true) {
+    const charAt0 = value.charAt(0);
 
-  // binary search
-  while (start <= end) {
-    const i: i32 = Math.floor((start + end) / 2) as i32;
-    const charCodeAt0 = value.charCodeAt(0);
-
-    const child = node.children[i];
-
-    if (child.charCodeAt0 == charCodeAt0) {
+    if (node.children.has(charAt0)) {
+      const child = node.children.get(charAt0);
       const lcp = child.lcp(value);
 
       // perfect match!
@@ -123,19 +93,13 @@ export function match(routes: Node, url: string): i32 {
       // the child label is the prefix of value
       if (lcp == child.label.length - 1) {
         node = child;
-        start = 0;
-        end = node.children.length - 1;
         value = value.slice(lcp + 1);
       } else {
         // value and child.label shares some common prefix so no other child could be a match, exit
         return -1;
       }
-    } else if (child.charCodeAt0 < charCodeAt0) {
-      start = i + 1;
     } else {
-      end = i - 1;
+      return -1;
     }
   }
-
-  return -1;
 }
