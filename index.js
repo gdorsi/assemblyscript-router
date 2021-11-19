@@ -1,24 +1,58 @@
 const fs = require("fs");
 const loader = require("@assemblyscript/loader");
-const imports = { /* imports go here */ };
-const wasmModule = loader.instantiateSync(fs.readFileSync(__dirname + "/build/optimized.wasm"), imports);
+const wasmModule = loader.instantiateSync(
+  fs.readFileSync(__dirname + "/build/optimized.wasm")
+);
 
-const { __newString } = wasmModule.exports
+const { __newString } = wasmModule.exports;
+
+class Router {
+  methods = new Map();
+
+  on(method, url, callback) {
+    if (!this.methods.has(method)) {
+      this.methods.set(method, {
+        matcher: create(),
+        routes: [],
+      });
+    }
+
+    const router = this.methods.get(method);
+    const id = router.routes.length;
+
+    router.routes.push({ url, callback });
+    add(router.matcher, url, id);
+  }
+
+  lookup({ method, url }) {
+    const router = this.methods.get(method);
+
+    if (!router) {
+        return;
+    }
+
+    const id = match(router.matcher, url);
+
+    if (id === -1) {
+        return;
+    }
+
+    const route = router.routes[id];
+
+    route.callback();
+  }
+}
 
 function create() {
-    return wasmModule.exports.create();
+  return wasmModule.exports.create();
 }
 
 function add(routes, route, id) {
-    return wasmModule.exports.add(routes, __newString(route), id);
+  return wasmModule.exports.add(routes, __newString(route), id);
 }
 
 function match(routes, url) {
-    return wasmModule.exports.match(routes, __newString(url));
+  return wasmModule.exports.match(routes, __newString(url));
 }
 
-module.exports = {
-    add,
-    create,
-    match,
-};
+module.exports = Router;

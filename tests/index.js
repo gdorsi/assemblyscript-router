@@ -1,5 +1,5 @@
 const assert = require("assert");
-const myModule = require("..");
+const Router = require("..");
 
 const testRoutes = [
   "/v1/domain/users/",
@@ -12,16 +12,28 @@ const testRoutes = [
   "/v2/domain/task/",
 ];
 
-const routes = myModule.create();
+const router = new Router();
 
-let id = 0;
+const noop = () => {};
 
 for (let route of testRoutes) {
-  myModule.add(routes, route, id++);
+  router.on("GET", route, noop);
 }
 
-myModule.add(routes, "/v1/domain/test", id);
+let matched = false;
 
-assert.strictEqual(myModule.match(routes, "/v1/domain/test"), id);
-assert.strictEqual(myModule.match(routes, "not-found"), -1);
+router.on("GET", "/v1/domain/test", () => {
+  matched = true;
+});
+
+router.lookup({ method: "GET", url: "/v1/domain/test" });
+
+assert.strictEqual(matched, true);
+
+matched = false;
+
+router.lookup({ method: "GET", url: "/v1/domain/not-found" });
+
+assert.strictEqual(matched, false);
+
 console.log("ok");
