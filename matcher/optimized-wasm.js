@@ -10,6 +10,20 @@ const wasmModule = loader.instantiateSync(
 
 const { __newString, __pin } = wasmModule.exports;
 
+const strings = new Map();
+
+function newString(string) {
+  let pStr = strings.get(string);
+
+  if (!pStr) {
+    pStr = __newString(string);
+    __pin(pStr);
+    strings.set(string, pStr);
+  }
+
+  return pStr;
+}
+
 function create() {
   const matcher = wasmModule.exports.create();
 
@@ -18,30 +32,12 @@ function create() {
   return matcher;
 }
 
-const strings = new Map();
-
 function add(routes, route, id) {
-  let pStr = strings.get(route);
-
-  if (!pStr) {
-    pStr = __newString(route);
-    __pin(pStr);
-    strings.set(route, pStr);
-  }
-
-  return wasmModule.exports.add(routes, pStr, id);
+  return wasmModule.exports.add(routes, newString(route), id);
 }
 
 function match(routes, url) {
-  let pStr = strings.get(url);
-
-  if (!pStr) {
-    pStr = __newString(url);
-    __pin(pStr);
-    strings.set(url, pStr);
-  }
-
-  return wasmModule.exports.match(routes, pStr);
+  return wasmModule.exports.match(routes, newString(url));
 }
 
 module.exports = {
