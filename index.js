@@ -1,16 +1,18 @@
-const defaultMatcherModule = require("./matcher/optimized-wasm");
+let matcherModule = require("./matcher/optimized-wasm");
+
+if (process.argv.includes('--js')) {
+  matcherModule = require("./matcher");
+} else if (process.argv.includes('--debug')) {
+  matcherModule = require("./matcher/untouched-wasm");
+}
 
 class Router {
   methods = {};
 
-  constructor(matcherModule = defaultMatcherModule) {
-    this.matcherModule = matcherModule;
-  }
-
   on(method, url, callback) {
     if (!this.methods[method]) {
       this.methods[method] = {
-        matcher: this.matcherModule.create(),
+        matcher: matcherModule.create(),
         routes: [],
       };
     }
@@ -19,7 +21,7 @@ class Router {
     const id = router.routes.length;
 
     router.routes.push({ url, callback });
-    this.matcherModule.add(router.matcher, url, id);
+    matcherModule.add(router.matcher, url, id);
   }
 
   lookup({ method, url }) {
@@ -29,7 +31,7 @@ class Router {
       return;
     }
 
-    const match = this.matcherModule.match(router.matcher, url);
+    const match = matcherModule.match(router.matcher, url);
 
     if (match.id === -1) {
       return;
