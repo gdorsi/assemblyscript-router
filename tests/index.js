@@ -16,7 +16,7 @@ const testRoutes = [
   "/v2/domain/task/",
 ];
 
-test("matches the url when declared as route", (t) => {
+test("lookup static route", (t) => {
   t.plan(1);
 
   const router = new Router();
@@ -28,28 +28,47 @@ test("matches the url when declared as route", (t) => {
   router.lookup({ method: "GET", url: "/example", headers: {} }, null);
 });
 
-test("matches the url when declared as param route", (t) => {
+test("lookup dynamic route with trailing slash", (t) => {
   t.plan(1);
 
   const router = new Router();
 
-  router.on("GET", "/example/:name/", function handle() {
-    t.ok(true);
+  router.on("GET", "/example/:name/", function handle(params) {
+    t.same(params, {
+      name: 'guido'
+    });
   });
 
   router.lookup({ method: "GET", url: "/example/guido/", headers: {} }, null);
 });
 
-test("matches the url when declared as param route 2", (t) => {
+test("lookup dynamic route", (t) => {
   t.plan(1);
 
   const router = new Router();
 
-  router.on("GET", "/example/:name", function handle() {
-    t.ok(true);
+  router.on("GET", "/example/:name", function handle(params) {
+    t.same(params, {
+      name: 'guido'
+    });
   });
 
   router.lookup({ method: "GET", url: "/example/guido", headers: {} }, null);
+});
+
+test("lookup dynamic multi-parametric route", (t) => {
+  t.plan(1);
+
+  const router = new Router();
+
+  router.on("GET", "/example/:name-:surname", function handle(params) {
+    t.same(params, {
+      name: 'guido',
+      surname: 'dorsi',
+    });
+  });
+
+  router.lookup({ method: "GET", url: "/example/guido-dorsi", headers: {} }, null);
 });
 
 test("matches the url when a bunch of routes are declared", (t) => {

@@ -8,7 +8,7 @@ const wasmModule = loader.instantiateSync(
   imports
 );
 
-const { __newString, __pin } = wasmModule.exports;
+const { __newString, __pin, __getArray, __getString } = wasmModule.exports;
 
 const strings = new Map();
 
@@ -36,8 +36,26 @@ function add(routes, route, id) {
   return wasmModule.exports.add(routes, newString(route), id);
 }
 
+const emptyObj = {}
+
 function match(routes, url) {
-  return wasmModule.exports.match(routes, newString(url));
+  const id = wasmModule.exports.match(routes, newString(url));
+
+  if (id > -1 && wasmModule.exports.getHasParams() === 1) {
+    const pParams = __getArray(wasmModule.exports.getParams());
+
+    let params = {};
+
+    for (let i = 0; i < pParams.length; i += 2) {
+      if (pParams[i] !== 0) {
+        params[__getString(pParams[i])] = __getString(pParams[i + 1]);
+      }
+    }
+
+    return { id, params };
+  }
+
+  return { id, params: emptyObj };
 }
 
 module.exports = {

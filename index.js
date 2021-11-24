@@ -29,15 +29,15 @@ class Router {
       return;
     }
 
-    const id = this.matcherModule.match(router.matcher, url);
+    const match = this.matcherModule.match(router.matcher, url);
 
-    if (id === -1) {
+    if (match.id === -1) {
       return;
     }
 
-    const route = router.routes[id];
+    const route = router.routes[match.id];
 
-    route.callback();
+    route.callback(match.params);
   }
 }
 

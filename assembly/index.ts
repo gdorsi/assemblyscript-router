@@ -9,9 +9,20 @@ class Node {
   children: Map<number, Node>;
   params: Array<Node>;
   type: NodeType;
+  paramKey: string = "";
+  /*
+    Char codes:
+      '/': 47
+  */
+  paramEndCharCode: i32 = 47;
 
   constructor(label: string, id: i32 = -1) {
-    const type = label.charCodeAt(0) == 58 /*:*/ ? NodeType.PARAM : NodeType.STATIC;
+    /*
+      Char codes:
+        ':': 58
+    */
+    const type =
+      label.charCodeAt(0) == 58 /*:*/ ? NodeType.PARAM : NodeType.STATIC;
 
     this.params = new Array<Node>(0);
     this.children = new Map<number, Node>();
@@ -32,16 +43,7 @@ class Node {
         this.id = -1;
       }
     } else if (type === NodeType.PARAM) {
-      const i = label.indexOf("/");
-
-      if (i !== -1) {
-        const child = new Node(label.slice(i), id);
-
-        this.children.set(child.key, child);
-
-        this.label = label.slice(0, i);
-        this.id = -1;
-      }
+      this.parseParam();
     }
   }
 
@@ -49,11 +51,44 @@ class Node {
     return this.label.charCodeAt(0);
   }
 
+  parseParam(): void {
+    let i = 0;
+
+    /*
+      Char codes:
+        '-': 45
+        '.': 46
+        '/': 47
+    */
+    while (i < this.label.length) {
+      const charCode = this.label.charCodeAt(i);
+
+      if (charCode == 45 || charCode == 46 || charCode == 47) {
+        this.paramEndCharCode = this.label.charCodeAt(i);
+
+        const child = new Node(this.label.slice(i), this.id);
+
+        this.children.set(child.key, child);
+
+        this.label = this.label.slice(0, i);
+        this.id = -1;
+        break;
+      }
+
+      i++;
+    }
+
+    this.paramKey = this.label.slice(1);
+  }
+
   // Longest Common Prefix
   lcp(label: string, offset: i32 = 0): i32 {
     let k = 0;
 
-    while (label.charCodeAt(k + offset) == this.label.charCodeAt(k) && label.length > k + offset) {
+    while (
+      label.charCodeAt(k + offset) == this.label.charCodeAt(k) &&
+      label.length > k + offset
+    ) {
       k++;
     }
 
@@ -120,9 +155,34 @@ export function add(routes: Node, route: string, id: i32): void {
   routes.add(route, id);
 }
 
+let params = new Array<string>(0);
+let paramsI: i32 = 0;
+
+function addToParams(key: string, value: string): void {
+  if (paramsI + 1 < params.length) {
+    params[paramsI] = key;
+    params[paramsI + 1] = value;
+  } else {
+    params.push(key);
+    params.push(value)
+  }
+
+  paramsI += 2;
+}
+
+export function getParams(): Array<string> {
+  return params;
+}
+
+export function getHasParams(): i8 {
+  return paramsI == 0 ? 0 : 1;
+}
+
 export function match(routes: Node, url: string): i32 {
   let node = routes;
   let i = 0;
+
+  paramsI = 0;
 
   if (routes.label == url) {
     return routes.id;
@@ -155,13 +215,26 @@ export function match(routes: Node, url: string): i32 {
     } else if (node.params.length) {
       //no regexp atm
       node = node.params[0];
-      const nextSlice = url.indexOf("/", i);
 
-      if (nextSlice === -1) {
+      let k = i;
+
+      while (k < url.length && url.charCodeAt(k) !== node.paramEndCharCode) {
+        k++;
+      }
+
+      if (paramsI === 0) {
+        params = new Array<string>(10);
+      }
+
+      if (k === url.length) {
+        addToParams(node.paramKey, url.slice(i));
+
         return node.id;
       }
 
-      i = nextSlice;
+      addToParams(node.paramKey, url.slice(i, k));
+
+      i = k;
     } else {
       return -1;
     }
