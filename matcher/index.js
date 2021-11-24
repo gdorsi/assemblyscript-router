@@ -1,6 +1,7 @@
 
 const matcher = require('../build/index');
 
+const emptyObj = {};
 
 function match(routes, url) {
     const id = matcher.match(routes, (url));
@@ -10,8 +11,8 @@ function match(routes, url) {
   
       let params = {};
   
-      for (let i = 0; i < pParams.length; i += 2) {
-        if (aParams[i] !== 0) {
+      for (let i = 0; i < aParams.length; i += 2) {
+        if (aParams[i] !== undefined) {
           params[aParams[i]] = aParams[i + 1];
         }
       }
