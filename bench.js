@@ -73,48 +73,48 @@ suite
   // .add('lookup static constrained (version & host) route', function () {
   //   constrained.lookup({ method: 'GET', url: '/versioned', headers: { 'accept-version': '2.x', host: 'fastify.io' } }, null)
   // })
-  // .add('find static route', function () {
-  //   router.find('GET', '/', undefined)
-  // })
-  // .add('find dynamic route', function () {
-  //   router.find('GET', '/user/tomas', undefined)
-  // })
+  .add('find static route', function () {
+    router.find('GET', '/', undefined)
+  })
+  .add('find dynamic route', function () {
+    router.find('GET', '/user/tomas', undefined)
+  })
   // .add('find dynamic route with encoded parameter unoptimized', function () {
   //   router.find('GET', '/user/maintainer%2Btomas', undefined)
   // })
   // .add('find dynamic route with encoded parameter optimized', function () {
   //   router.find('GET', '/user/maintainer%20tomas', undefined)
   // })
-  // .add('find dynamic multi-parametric route', function () {
-  //   router.find('GET', '/customer/john-doe', undefined)
-  // })
+  .add('find dynamic multi-parametric route', function () {
+    router.find('GET', '/customer/john-doe', undefined)
+  })
   // .add('find dynamic multi-parametric route with regex', function () {
   //   router.find('GET', '/at/12h00m', undefined)
   // })
-  // .add('find long static route', function () {
-  //   router.find('GET', '/abc/def/ghi/lmn/opq/rst/uvz', undefined)
-  // })
-  // .add('find long dynamic route', function () {
-  //   router.find('GET', '/user/qwertyuiopasdfghjklzxcvbnm/static', undefined)
-  // })
-  // .add('find long nested dynamic route', function () {
-  //   router.find('GET', '/posts/10/comments/42/author', undefined)
-  // })
+  .add('find long static route', function () {
+    router.find('GET', '/abc/def/ghi/lmn/opq/rst/uvz', undefined)
+  })
+  .add('find long dynamic route', function () {
+    router.find('GET', '/user/qwertyuiopasdfghjklzxcvbnm/static', undefined)
+  })
+  .add('find long nested dynamic route', function () {
+    router.find('GET', '/posts/10/comments/42/author', undefined)
+  })
   // .add('find long nested dynamic route with encoded parameter unoptimized', function () {
   //   router.find('GET', '/posts/10%2C10/comments/42%2C42/author', undefined)
   // })
   // .add('find long nested dynamic route with encoded parameter optimized', function () {
   //   router.find('GET', '/posts/10%2510/comments/42%2542/author', undefined)
   // })
-  // .add('find long nested dynamic route with other method', function () {
-  //   router.find('POST', '/posts/10/comments', undefined)
-  // })
-  // .add('find long nested dynamic route', function () {
-  //   router.find('GET', '/posts/10/comments/42/author', undefined)
-  // })
-  // .add('find long nested dynamic route with other method', function () {
-  //   router.find('POST', '/posts/10/comments', undefined)
-  // })
+  .add('find long nested dynamic route with other method', function () {
+    router.find('POST', '/posts/10/comments', undefined)
+  })
+  .add('find long nested dynamic route', function () {
+    router.find('GET', '/posts/10/comments/42/author', undefined)
+  })
+  .add('find long nested dynamic route with other method', function () {
+    router.find('POST', '/posts/10/comments', undefined)
+  })
   .on('cycle', function (event) {
     console.log(String(event.target))
   })

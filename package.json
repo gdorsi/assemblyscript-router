@@ -7,7 +7,8 @@
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
     "build": "yarn jsbuild && yarn asbuild",
     "bench": "node bench.js",
-    "test": "node tests"
+    "test": "tap",
+    "test:report": "tap --coverage-report=html"
   },
   "dependencies": {
     "@assemblyscript/loader": "^0.19.20"

@@ -9,7 +9,7 @@ if (process.argv.includes('--js')) {
 class Router {
   methods = {};
 
-  on(method, url, callback) {
+  on(method, url, handler) {
     if (!this.methods[method]) {
       this.methods[method] = {
         matcher: matcherModule.create(),
@@ -20,26 +20,37 @@ class Router {
     const router = this.methods[method];
     const id = router.routes.length;
 
-    router.routes.push({ url, callback });
+    router.routes.push({ url, handler });
     matcherModule.add(router.matcher, url, id);
   }
 
-  lookup({ method, url }) {
-    const router = this.methods[method];
+  find(opts) {
+    const router = this.methods[opts.method];
 
     if (router === undefined) {
       return;
     }
 
-    const match = matcherModule.match(router.matcher, url);
+    const match = matcherModule.match(router.matcher, opts.url);
 
     if (match.id === -1) {
       return;
     }
 
-    const route = router.routes[match.id];
+    const handler = router.routes[match.id].handler;
 
-    route.callback(match.params);
+    return {
+      handler,
+      params: match.params,
+    }
+  }
+
+  lookup(opts) {
+    const result = this.find(opts);
+
+    if (result !== undefined) {
+      result.handler(result.params);
+    }
   }
 }
 
