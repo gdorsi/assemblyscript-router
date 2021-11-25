@@ -27,7 +27,7 @@ const emptyObj = {}
 function match(routes, url) {
   const id = wasmModule.exports.match(routes, __newString(url));
 
-  if (id > -1 && wasmModule.exports.getHasParams() === 1) {
+  if (id > -1 && wasmModule.exports.getParamsSize() > 0) {
     const pParams = __getArray(wasmModule.exports.getParams());
 
     let params = {};
