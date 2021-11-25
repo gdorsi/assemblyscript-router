@@ -28,8 +28,8 @@ test("find static route", (t) => {
     null
   );
 
-  t.equal(result.handler, handle);
-  t.same(result.params, {});
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {});
   t.end();
 });
 
@@ -45,8 +45,8 @@ test("find dynamic route with trailing slash", (t) => {
     null
   );
 
-  t.equal(result.handler, handle);
-  t.same(result.params, {
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {
     name: "guido",
   });
   t.end();
@@ -64,8 +64,8 @@ test("find dynamic route", (t) => {
     null
   );
 
-  t.equal(result.handler, handle);
-  t.same(result.params, {
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {
     name: "guido",
   });
   t.end();
@@ -83,10 +83,29 @@ test("find dynamic multi-parametric route", (t) => {
     null
   );
 
-  t.equal(result.handler, handle);
-  t.same(result.params, {
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {
     name: "guido",
     surname: "dorsi",
+  });
+  t.end();
+});
+
+test("find dynamic parametric route with encoded url", (t) => {
+  const router = new Router();
+
+  function handle() {}
+
+  router.on("GET", "/example/:name", handle);
+
+  const result = router.find(
+    { method: "GET", url: "/example/guido%20dorsi", headers: {} },
+    null
+  );
+
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {
+    name: "guido dorsi",
   });
   t.end();
 });

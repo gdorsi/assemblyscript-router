@@ -47,7 +47,7 @@ print('static with same radix:', time)
 
 time = now()
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/user/lookup/username/john')
+  router.find('GET', '/user/lookup/username/john%20doe')
 }
 print('dynamic route:', time)
 

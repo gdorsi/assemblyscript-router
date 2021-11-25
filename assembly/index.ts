@@ -1,3 +1,5 @@
+import { getContainsEncodedComponents, sanitizeUrl } from "./url-sanitizer";
+
 enum NodeType {
   STATIC = 0,
   PARAM = 1,
@@ -164,7 +166,7 @@ function addToParams(key: string, value: string): void {
     params[paramsI + 1] = value;
   } else {
     params.push(key);
-    params.push(value)
+    params.push(value);
   }
 
   paramsI += 2;
@@ -179,6 +181,10 @@ export function getHasParams(): i8 {
 }
 
 export function match(routes: Node, url: string): i32 {
+  url = sanitizeUrl(url);
+
+  const containsEncodedComponents = getContainsEncodedComponents();
+
   let node = routes;
   let i = 0;
 
@@ -227,12 +233,20 @@ export function match(routes: Node, url: string): i32 {
       }
 
       if (k === url.length) {
-        addToParams(node.paramKey, url.slice(i));
+        if (containsEncodedComponents) {
+          addToParams(node.paramKey, decodeURIComponent(url.slice(i)));
+        } else {
+          addToParams(node.paramKey, url.slice(i));
+        }
 
         return node.id;
       }
 
-      addToParams(node.paramKey, url.slice(i, k));
+      if (containsEncodedComponents) {
+        addToParams(node.paramKey, decodeURIComponent(url.slice(i, k)));
+      } else {
+        addToParams(node.paramKey, url.slice(i, k));
+      }
 
       i = k;
     } else {
