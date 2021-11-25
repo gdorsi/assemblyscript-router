@@ -42,4 +42,4 @@ jspm_packages
 # vim swap files
 *.swp
 
-package-lock.json
+.clinic

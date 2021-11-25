@@ -1,5 +1,5 @@
 {
-  "name": "find-my-way-wasm",
+  "name": "assemblyscript-router",
   "scripts": {
     "jsbuild": "sucrase ./assembly -d ./build --transforms typescript,imports",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
@@ -7,6 +7,7 @@
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
     "build": "yarn jsbuild && yarn asbuild",
     "bench": "node bench.js",
+    "bench:compare": "cd router-benchmark && node runner.js",
     "test": "tap",
     "test:report": "tap --coverage-report=html"
   },
@@ -16,6 +17,8 @@
   "devDependencies": {
     "assemblyscript": "^0.19.20",
     "benchmark": "^2.1.4",
+    "chalk": "^2.3.2",
+    "find-my-way": "^1.11.0",
     "sucrase": "^3.20.3",
     "tap": "^15.1.2"
   },

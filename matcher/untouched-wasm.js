@@ -8,7 +8,7 @@ const wasmModule = loader.instantiateSync(
   imports
 );
 
-const { __newString, __pin } = wasmModule.exports;
+const { __newString, __pin, __getString, __getArray } = wasmModule.exports;
 
 function create() {
   const matcher = wasmModule.exports.create();
@@ -25,7 +25,7 @@ function add(routes, route, id) {
 const emptyObj = {}
 
 function match(routes, url) {
-  const id = wasmModule.exports.match(routes, newString(url));
+  const id = wasmModule.exports.match(routes, __newString(url));
 
   if (id > -1 && wasmModule.exports.getHasParams() === 1) {
     const pParams = __getArray(wasmModule.exports.getParams());
