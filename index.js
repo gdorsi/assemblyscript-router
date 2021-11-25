@@ -1,9 +1,9 @@
-let matcherModule = require("./matcher/optimized-wasm");
+let matcherModule = require("./assembly-glue/optimized-wasm");
 
 if (process.argv.includes('--js')) {
-  matcherModule = require("./matcher");
+  matcherModule = require("./assembly-glue");
 } else if (process.argv.includes('--debug')) {
-  matcherModule = require("./matcher/untouched-wasm");
+  matcherModule = require("./assembly-glue/untouched-wasm");
 }
 
 class Router {
