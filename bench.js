@@ -79,12 +79,12 @@ suite
   .add('find dynamic route', function () {
     router.find('GET', '/user/tomas', undefined)
   })
-  // .add('find dynamic route with encoded parameter unoptimized', function () {
-  //   router.find('GET', '/user/maintainer%2Btomas', undefined)
-  // })
-  // .add('find dynamic route with encoded parameter optimized', function () {
-  //   router.find('GET', '/user/maintainer%20tomas', undefined)
-  // })
+  .add('find dynamic route with encoded parameter unoptimized', function () {
+    router.find('GET', '/user/maintainer%2Btomas', undefined)
+  })
+  .add('find dynamic route with encoded parameter optimized', function () {
+    router.find('GET', '/user/maintainer%20tomas', undefined)
+  })
   .add('find dynamic multi-parametric route', function () {
     router.find('GET', '/customer/john-doe', undefined)
   })
@@ -100,12 +100,12 @@ suite
   .add('find long nested dynamic route', function () {
     router.find('GET', '/posts/10/comments/42/author', undefined)
   })
-  // .add('find long nested dynamic route with encoded parameter unoptimized', function () {
-  //   router.find('GET', '/posts/10%2C10/comments/42%2C42/author', undefined)
-  // })
-  // .add('find long nested dynamic route with encoded parameter optimized', function () {
-  //   router.find('GET', '/posts/10%2510/comments/42%2542/author', undefined)
-  // })
+  .add('find long nested dynamic route with encoded parameter unoptimized', function () {
+    router.find('GET', '/posts/10%2C10/comments/42%2C42/author', undefined)
+  })
+  .add('find long nested dynamic route with encoded parameter optimized', function () {
+    router.find('GET', '/posts/10%2510/comments/42%2542/author', undefined)
+  })
   .add('find long nested dynamic route with other method', function () {
     router.find('POST', '/posts/10/comments', undefined)
   })

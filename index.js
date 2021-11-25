@@ -54,4 +54,8 @@ class Router {
   }
 }
 
-module.exports = Router;
+function instance() {
+  return new Router()
+}
+
+module.exports = instance;

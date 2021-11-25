@@ -68,7 +68,7 @@ time = now()
 for (i = 0; i < operations; i++) {
   router.find('GET', '/user')
   router.find('GET', '/user/comments')
-  router.find('GET', '/user/lookup/username/john')
+  router.find('GET', '/user/lookup/username/john%20doe')
   router.find('GET', '/event/abcd1234/comments')
   router.find('GET', '/very/deeply/nested/route/hello/there')
   router.find('GET', '/static/index.html')

@@ -1,81 +1,78 @@
-'use strict'
+"use strict";
 
-const { title, now, print, operations } = require('../utils')
+const { title, now, print, operations } = require("../utils");
 
-process.argv.push('--js')
+process.argv.push("--js");
 
-const Router = require('../../index');
+const router = require("../../index")();
 
-const router = new Router();
-
-title('assemblyscript-router js benchmark')
+title("assemblyscript-router js benchmark");
 
 const routes = [
-  { method: 'GET', url: '/user' },
-  { method: 'GET', url: '/user/comments' },
-  { method: 'GET', url: '/user/avatar' },
-  { method: 'GET', url: '/user/lookup/username/:username' },
-  { method: 'GET', url: '/user/lookup/email/:address' },
-  { method: 'GET', url: '/event/:id' },
-  { method: 'GET', url: '/event/:id/comments' },
-  { method: 'POST', url: '/event/:id/comment' },
-  { method: 'GET', url: '/map/:location/events' },
-  { method: 'GET', url: '/status' },
-  { method: 'GET', url: '/very/deeply/nested/route/hello/there' },
-  { method: 'GET', url: '/static/*' }
-]
+  { method: "GET", url: "/user" },
+  { method: "GET", url: "/user/comments" },
+  { method: "GET", url: "/user/avatar" },
+  { method: "GET", url: "/user/lookup/username/:username" },
+  { method: "GET", url: "/user/lookup/email/:address" },
+  { method: "GET", url: "/event/:id" },
+  { method: "GET", url: "/event/:id/comments" },
+  { method: "POST", url: "/event/:id/comment" },
+  { method: "GET", url: "/map/:location/events" },
+  { method: "GET", url: "/status" },
+  { method: "GET", url: "/very/deeply/nested/route/hello/there" },
+  { method: "GET", url: "/static/*" },
+];
 
-function noop () {}
-var i = 0
-var time = 0
+var i = 0;
+var time = 0;
 
-routes.forEach(route => {
-  router.on(route.method, route.url, noop)
-})
+routes.forEach((route) => {
+  router.on(route.method, route.url, () => Math.random());
+});
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/user')
+  router.lookup("GET", "/user");
 }
-print('short static:', time)
+print("short static:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/user/comments')
+  router.lookup("GET", "/user/comments");
 }
-print('static with same radix:', time)
+print("static with same radix:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/user/lookup/username/john%20doe')
+  router.lookup("GET", "/user/lookup/username/john%20doe");
 }
-print('dynamic route:', time)
+print("dynamic route:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/event/abcd1234/comments')
+  router.lookup("GET", "/event/abcd1234/comments");
 }
-print('mixed static dynamic:', time)
+print("mixed static dynamic:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/very/deeply/nested/route/hello/there')
+  router.lookup("GET", "/very/deeply/nested/route/hello/there");
 }
-print('long static:', time)
+print("long static:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/static/index.html')
+  router.lookup("GET", "/static/index.html");
 }
-print('wildcard:', time)
+print("wildcard:", time);
 
-time = now()
+time = now();
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/user')
-  router.find('GET', '/user/comments')
-  router.find('GET', '/user/lookup/username/john')
-  router.find('GET', '/event/abcd1234/comments')
-  router.find('GET', '/very/deeply/nested/route/hello/there')
-  router.find('GET', '/static/index.html')
+  router.lookup("GET", "/user");
+  router.lookup("GET", "/user/comments");
+  router.lookup("GET", "/user/lookup/username/john%20doe");
+  router.lookup("GET", "/event/abcd1234/comments");
+  router.lookup("GET", "/very/deeply/nested/route/hello/there");
+  router.lookup("GET", "/static/index.html");
 }
-print('all together:', time)
+print("all together:", time);
