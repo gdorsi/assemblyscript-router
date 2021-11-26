@@ -1,6 +1,7 @@
-enum NodeType {
+export enum NodeType {
   STATIC = 0,
   PARAM = 1,
+  MATCH_ALL = 2,
 }
 
 export class Node {
@@ -10,19 +11,21 @@ export class Node {
   params: Array<Node>;
   type: NodeType;
   paramKey: string = "";
-  /*
-      Char codes:
-        '/': 47
-    */
-  paramEndCharCode: i32 = 47;
+  paramEndCharCode: i32 = -1;
 
   constructor(label: string, id: i32 = -1) {
     /*
         Char codes:
+        '*': 42
         ':': 58
     */
+    const charCodeAt0 = label.charCodeAt(0);
     const type =
-      label.charCodeAt(0) == 58 /*:*/ ? NodeType.PARAM : NodeType.STATIC;
+      charCodeAt0 == 58
+        ? NodeType.PARAM
+        : charCodeAt0 === 42
+        ? NodeType.MATCH_ALL
+        : NodeType.STATIC;
 
     this.params = new Array<Node>(0);
     this.children = new Map<number, Node>();
@@ -31,7 +34,7 @@ export class Node {
     this.id = id;
     this.type = type;
 
-    this.parseLabel()
+    this.parseLabel();
   }
 
   get key(): i32 {
@@ -40,17 +43,32 @@ export class Node {
 
   parseLabel(): void {
     if (this.type === NodeType.STATIC) {
-      const i = this.label.indexOf(":");
+      let i = 0;
 
-      if (i !== -1) {
-        const child = new Node(this.label.slice(i), this.id);
+      /*
+        Char codes:
+            '*': 42
+            ':': 58
+        */
+      while (i < this.label.length) {
+        const charCode = this.label.charCodeAt(i);
 
-        this.params.push(child);
+        if (charCode == 42 || charCode == 58) {
+          const child = new Node(this.label.slice(i), this.id);
 
-        this.label = this.label.slice(0, i);
-        this.id = -1;
+          this.params.push(child);
+          //params first
+          this.params.sort((a, b) =>
+            a.type === b.type ? 0 : a.type === NodeType.PARAM ? -1 : 1
+          );
+
+          this.label = this.label.slice(0, i);
+          this.id = -1;
+        }
+
+        i++;
       }
-    } else if (this.type === NodeType.PARAM) {
+    } else {
       let i = 0;
 
       /*
@@ -59,6 +77,10 @@ export class Node {
         '.': 46
         '/': 47
       */
+      if (this.type === NodeType.PARAM) {
+        this.paramEndCharCode = 47;
+      }
+
       while (i < this.label.length) {
         const charCode = this.label.charCodeAt(i);
 
@@ -77,7 +99,9 @@ export class Node {
         i++;
       }
 
-      this.paramKey = this.label.slice(1);
+      if (this.type === NodeType.PARAM) {
+        this.paramKey = this.label.slice(1);
+      }
     }
   }
 

@@ -110,6 +110,40 @@ test("find dynamic parametric route with encoded url", (t) => {
   t.end();
 });
 
+test("find match-all", (t) => {
+  const router = new Router();
+
+  function handle() {}
+
+  router.on("GET", "/example/*", handle);
+
+  const result = router.find(
+    { method: "GET", url: "/example/guido/dorsi", headers: {} },
+    null
+  );
+
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {});
+  t.end();
+});
+
+test("params should have the priority over", (t) => {
+  const router = new Router();
+
+  function handle() {}
+
+  router.on("GET", "/example/*", handle);
+
+  const result = router.find(
+    { method: "GET", url: "/example/guido/dorsi", headers: {} },
+    null
+  );
+
+  t.equal(result?.handler, handle);
+  t.same(result?.params, {});
+  t.end();
+});
+
 test("find non existent method", (t) => {
   const router = new Router();
 

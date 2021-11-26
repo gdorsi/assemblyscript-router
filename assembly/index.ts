@@ -1,4 +1,4 @@
-import { Node } from "./node";
+import { Node, NodeType } from "./node";
 import { getContainsEncodedComponents, sanitizeUrl } from "./url-sanitizer";
 
 export function create(): Node {
@@ -12,7 +12,7 @@ export function add(routes: Node, route: string, id: i32): void {
 let params = new Array<string>(0);
 let paramsSize: i32 = 0;
 
-// @inline 
+// @inline
 function addToParams(key: string, value: string): void {
   if (paramsSize === 0) {
     params = new Array<string>(10);
@@ -86,24 +86,28 @@ export function match(routes: Node, url: string): i32 {
       }
 
       if (k === url.length) {
-        if (containsEncodedComponents) {
-          addToParams(node.paramKey, decodeURIComponent(url.slice(i)));
-        } else {
-          addToParams(node.paramKey, url.slice(i));
+        if (node.type !== NodeType.MATCH_ALL) {
+          if (containsEncodedComponents) {
+            addToParams(node.paramKey, decodeURIComponent(url.slice(i)));
+          } else {
+            addToParams(node.paramKey, url.slice(i));
+          }
+
+          return node.id;
         }
 
-        return node.id;
-      }
+        if (node.type !== NodeType.MATCH_ALL) {
+          if (containsEncodedComponents) {
+            addToParams(node.paramKey, decodeURIComponent(url.slice(i, k)));
+          } else {
+            addToParams(node.paramKey, url.slice(i, k));
+          }
+        }
 
-      if (containsEncodedComponents) {
-        addToParams(node.paramKey, decodeURIComponent(url.slice(i, k)));
+        i = k;
       } else {
-        addToParams(node.paramKey, url.slice(i, k));
+        return -1;
       }
-
-      i = k;
-    } else {
-      return -1;
     }
   }
 }
