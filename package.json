@@ -18,7 +18,7 @@
     "assemblyscript": "^0.19.20",
     "benchmark": "^2.1.4",
     "chalk": "^2.3.2",
-    "find-my-way": "^1.11.0",
+    "find-my-way": "^5.0.0",
     "sucrase": "^3.20.3",
     "tap": "^15.1.2"
   },
