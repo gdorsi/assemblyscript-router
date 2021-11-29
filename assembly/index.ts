@@ -1,5 +1,6 @@
 import { Node } from "./node";
-import { getContainsEncodedComponents, sanitizeUrl } from "./url-sanitizer";
+import { Params } from "./params";
+import { SanitizeURL } from "./url-sanitizer";
 
 export function create(): Node {
   return new Node("/");
@@ -9,43 +10,21 @@ export function add(routes: Node, route: string, id: i32): void {
   routes.add(route, id);
 }
 
-let params = new Array<string>(0);
-let paramsSize: i32 = 0;
-
-// @inline 
-function addToParams(key: string, value: string): void {
-  if (paramsSize === 0) {
-    params = new Array<string>(10);
-  }
-
-  if (paramsSize + 1 < params.length) {
-    params[paramsSize] = key;
-    params[paramsSize + 1] = value;
-  } else {
-    params.push(key);
-    params.push(value);
-  }
-
-  paramsSize += 2;
+export function getParams(): string[] {
+  return Params.get();
 }
 
-export function getParams(): Array<string> {
-  return params;
-}
-
-export function getParamsSize(): i32 {
-  return paramsSize;
+export function hasParams(): i32 {
+  return Params.size() > 0 ? 1 : 0;
 }
 
 export function match(routes: Node, url: string): i32 {
-  url = sanitizeUrl(url);
-
-  const containsEncodedComponents = getContainsEncodedComponents();
+  url = SanitizeURL.apply(url);
 
   let node = routes;
   let i = 0;
 
-  paramsSize = 0;
+  Params.resert();
 
   if (routes.label == url) {
     return routes.id;
@@ -86,19 +65,19 @@ export function match(routes: Node, url: string): i32 {
       }
 
       if (k === url.length) {
-        if (containsEncodedComponents) {
-          addToParams(node.paramKey, decodeURIComponent(url.slice(i)));
+        if (SanitizeURL.hasEncodedComponents()) {
+          Params.add(node.paramKey, decodeURIComponent(url.slice(i)));
         } else {
-          addToParams(node.paramKey, url.slice(i));
+          Params.add(node.paramKey, url.slice(i));
         }
 
         return node.id;
       }
 
-      if (containsEncodedComponents) {
-        addToParams(node.paramKey, decodeURIComponent(url.slice(i, k)));
+      if (SanitizeURL.hasEncodedComponents()) {
+        Params.add(node.paramKey, decodeURIComponent(url.slice(i, k)));
       } else {
-        addToParams(node.paramKey, url.slice(i, k));
+        Params.add(node.paramKey, url.slice(i, k));
       }
 
       i = k;

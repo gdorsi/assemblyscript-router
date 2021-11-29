@@ -6,7 +6,7 @@ const emptyObj = {};
 function match(routes, url) {
     const id = matcher.match(routes, (url));
   
-    if (id > -1 && matcher.getParamsSize() > 0) {
+    if (id > -1 && matcher.hasParams() === 1) {
       const aParams = matcher.getParams();
   
       let params = {};
