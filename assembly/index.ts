@@ -1,4 +1,5 @@
-import { Node } from "./node";
+import { insert } from "./insert";
+import { getLongestCommonPrefix, Node, nodeToString } from "./node";
 import { Params } from "./params";
 import { SanitizeURL } from "./url-sanitizer";
 
@@ -7,7 +8,7 @@ export function create(): Node {
 }
 
 export function add(routes: Node, route: string, id: i32): void {
-  routes.add(route, id);
+  insert(routes, route, id);
 }
 
 export function getParams(): string[] {
@@ -18,11 +19,11 @@ export function hasParams(): i32 {
   return Params.size() > 0 ? 1 : 0;
 }
 
-export function match(routes: Node, url: string): i32 {
+export function match(routes: Node, url: string): i32 {  
   url = SanitizeURL.apply(url);
 
   let node = routes;
-  let i = 0;
+  let i = 1;
 
   Params.resert();
 
@@ -39,7 +40,7 @@ export function match(routes: Node, url: string): i32 {
 
     if (node.children.has(key)) {
       const child = node.children.get(key);
-      const lcp = child.lcp(url, i);
+      const lcp = getLongestCommonPrefix(child, url, i);
 
       // perfect match!
       if (lcp == url.length - i) {
