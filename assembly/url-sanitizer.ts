@@ -31,12 +31,12 @@ export function getContainsEncodedComponents(): boolean {
   return containsEncodedComponents;
 }
 
-export function sanitizeUrl(url: string): string {
+export function sanitizeUrl(url: string, length: i32): string {
   let originPath = url;
   let shouldDecode = false;
   let highChar: i32 = -1;
   let lowChar: i32 = -1;
-  for (var i = 0, len = url.length; i < len; i++) {
+  for (var i = 0, len = length; i < len; i++) {
     var charCode = url.charCodeAt(i);
 
     if (shouldDecode && !containsEncodedComponents) {
@@ -66,7 +66,7 @@ export function sanitizeUrl(url: string): string {
       highChar = 0x00;
     }
   }
-  const decoded = shouldDecode ? decodeURI(originPath) : originPath;
+  const decoded = shouldDecode ? decodeURI(originPath.slice(0, length)) : originPath;
 
   return decoded;
 }

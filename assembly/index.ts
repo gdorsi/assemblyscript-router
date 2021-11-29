@@ -37,8 +37,12 @@ export function getParamsSize(): i32 {
   return paramsSize;
 }
 
-export function match(routes: Node, url: string): i32 {
-  url = sanitizeUrl(url);
+export function match(routes: Node, url: string, length: i32): i32 {
+  url = sanitizeUrl(url, length);
+
+  if (url.length < length) {
+    length = url.length;
+  }
 
   const containsEncodedComponents = getContainsEncodedComponents();
 
@@ -52,7 +56,7 @@ export function match(routes: Node, url: string): i32 {
   }
 
   while (true) {
-    if (url.length <= i) {
+    if (length <= i) {
       return node.id;
     }
 
@@ -63,7 +67,7 @@ export function match(routes: Node, url: string): i32 {
       const lcp = child.lcp(url, i);
 
       // perfect match!
-      if (lcp == url.length - i) {
+      if (lcp == length - i) {
         return child.id;
       }
 
@@ -81,15 +85,15 @@ export function match(routes: Node, url: string): i32 {
 
       let k = i;
 
-      while (k < url.length && url.charCodeAt(k) !== node.paramEndCharCode) {
+      while (k < length && url.charCodeAt(k) !== node.paramEndCharCode) {
         k++;
       }
 
-      if (k === url.length) {
+      if (k === length) {
         if (containsEncodedComponents) {
-          addToParams(node.paramKey, decodeURIComponent(url.slice(i)));
+          addToParams(node.paramKey, decodeURIComponent(url.slice(i, length)));
         } else {
-          addToParams(node.paramKey, url.slice(i));
+          addToParams(node.paramKey, url.slice(i, length));
         }
 
         return node.id;

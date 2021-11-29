@@ -8,7 +8,7 @@ const wasmModule = loader.instantiateSync(
   imports
 );
 
-const { __newString, __pin, __getArray, __getString } = wasmModule.exports;
+const { __new, memory, __newString, __pin, __getArray, __getString } = wasmModule.exports;
 
 function create() {
   const matcher = wasmModule.exports.create();
@@ -24,8 +24,20 @@ function add(routes, route, id) {
 
 const emptyObj = {}
 
+const pUrlStr = __new(2046 << 1, 1 /* STRING_ID */);
+
+__pin(pUrlStr);
+
+function __copyString(str, ptr) {
+  if (str == null) return 0;
+  const length = str.length;
+  const U16 = new Uint16Array(memory.buffer);
+  for (var i = 0, p = ptr >>> 1; i < length; ++i) U16[p + i] = str.charCodeAt(i);
+  return ptr;
+}
+
 function match(routes, url) {
-  const id = wasmModule.exports.match(routes, __newString(url));
+  const id = wasmModule.exports.match(routes, __copyString(url, pUrlStr), url.length);
 
   if (id > -1 && wasmModule.exports.getParamsSize() > 0) {
     const pParams = __getArray(wasmModule.exports.getParams());
