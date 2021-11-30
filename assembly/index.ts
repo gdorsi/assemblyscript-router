@@ -25,7 +25,7 @@ export function match(routes: Node, url: string): i32 {
   let node = routes;
   let i = 1;
 
-  Params.resert();
+  Params.reset();
 
   if (routes.label == url) {
     return routes.id;
@@ -59,26 +59,10 @@ export function match(routes: Node, url: string): i32 {
       //no regexp atm
       node = node.params[0];
 
-      let k = i;
-
-      while (k < url.length && url.charCodeAt(k) !== node.paramEndCharCode) {
-        k++;
-      }
+      const k = Params.read(node, url, i, SanitizeURL.hasEncodedComponents());
 
       if (k === url.length) {
-        if (SanitizeURL.hasEncodedComponents()) {
-          Params.add(node.paramKey, decodeURIComponent(url.slice(i)));
-        } else {
-          Params.add(node.paramKey, url.slice(i));
-        }
-
         return node.id;
-      }
-
-      if (SanitizeURL.hasEncodedComponents()) {
-        Params.add(node.paramKey, decodeURIComponent(url.slice(i, k)));
-      } else {
-        Params.add(node.paramKey, url.slice(i, k));
       }
 
       i = k;

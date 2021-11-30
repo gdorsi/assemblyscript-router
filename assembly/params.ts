@@ -1,3 +1,5 @@
+import { Node } from "./node";
+
 let params = new Array<string>(0);
 let paramsSize: i32 = 0;
 
@@ -30,7 +32,26 @@ export namespace Params {
   }
 
   // @inline
-  export function resert(): void {
+  export function reset(): void {
     paramsSize = 0;
+  }
+
+  // @inline
+  export function read(node: Node, url: string, start: i32, decode: boolean): i32 {
+    let k = start;
+
+      while (k < url.length && url.charCodeAt(k) !== node.paramEndCharCode) {
+        k++;
+      }
+
+      let value = url.slice(start, k);
+
+      if (decode) {
+        value = decodeURIComponent(value)
+      }
+
+      add(node.paramKey, value);
+
+      return k;
   }
 }
