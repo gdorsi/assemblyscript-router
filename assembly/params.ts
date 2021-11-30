@@ -30,6 +30,11 @@ export namespace Params {
   export function size(): i32 {
     return paramsSize;
   }
+  
+  // @inline
+  export function setSize(value: i32): void {
+    paramsSize = value;
+  }
 
   // @inline
   export function reset(): void {
