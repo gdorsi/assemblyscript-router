@@ -4,7 +4,9 @@ const imports = {
   /* imports go here */
 };
 const wasmModule = loader.instantiateSync(
-  fs.readFileSync(__dirname + "/../build/optimized.wasm"),
+  process.env.NODE_ENV === "development"
+    ? fs.readFileSync(__dirname + "/../build/untouched.wasm")
+    : fs.readFileSync(__dirname + "/../build/optimized.wasm"),
   imports
 );
 
@@ -22,7 +24,7 @@ function add(routes, route, id) {
   return wasmModule.exports.add(routes, __newString(route), id);
 }
 
-const emptyObj = {}
+const emptyObj = {};
 
 function match(routes, url) {
   const id = wasmModule.exports.match(routes, __newString(url));

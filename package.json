@@ -1,25 +1,26 @@
 {
   "name": "assemblyscript-router",
   "scripts": {
-    "jsbuild": "sucrase ./assembly -d ./build --transforms typescript,imports",
+    "jsbuild": "swc ./assembly -d ./build",
     "asbuild:untouched": "asc assembly/index.ts --target debug",
     "asbuild:optimized": "asc assembly/index.ts --target release",
     "asbuild": "npm run asbuild:untouched && npm run asbuild:optimized",
     "build": "yarn jsbuild && yarn asbuild",
     "bench": "node bench.js",
     "bench:compare": "cd router-benchmark && node runner.js",
-    "test": "tap",
+    "test": "NODE_ENV=development tap",
     "test:report": "tap --coverage-report=html"
   },
   "dependencies": {
     "@assemblyscript/loader": "^0.19.20"
   },
   "devDependencies": {
+    "@swc/cli": "^0.1.52",
+    "@swc/core": "^1.2.113",
     "assemblyscript": "^0.19.20",
     "benchmark": "^2.1.4",
     "chalk": "^2.3.2",
     "find-my-way": "^5.0.0",
-    "sucrase": "^3.20.3",
     "tap": "^15.1.2"
   },
   "version": "1.0.0",

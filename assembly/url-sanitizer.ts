@@ -1,3 +1,5 @@
+// an assemplyscript re-implementation of https://github.com/delvedor/find-my-way/blob/70844a9c1effe065915ceabef3867abb1add618d/lib/url-sanitizer.js
+
 // It must spot all the chars where decodeURIComponent(x) !== decodeURI(x)
 // The chars are: # $ & + , / : ; = ? @
 const uriComponentsCharMap = new Array<Array<i8>>(53);
@@ -46,6 +48,7 @@ export namespace SanitizeURL {
     let originPath = url;
     let highChar: i32 = -1;
     let lowChar: i32 = -1;
+  
     for (var i = 0, len = url.length; i < len; i++) {
       var charCode = url.charCodeAt(i);
 

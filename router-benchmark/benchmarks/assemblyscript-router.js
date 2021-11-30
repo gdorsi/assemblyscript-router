@@ -2,7 +2,7 @@
 
 const { title, now, print, operations } = require("../utils");
 
-process.argv.push("--js");
+process.env.JS_RUNTIME = 1;
 
 const router = require("../../index")();
 

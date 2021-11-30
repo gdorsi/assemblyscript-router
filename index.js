@@ -1,9 +1,7 @@
-let matcherModule = require("./assembly-glue/optimized-wasm");
+let matcherModule = require("./assembly-glue/wasm-runtime");
 
-if (process.argv.includes('--js')) {
-  matcherModule = require("./assembly-glue");
-} else if (process.argv.includes('--debug')) {
-  matcherModule = require("./assembly-glue/untouched-wasm");
+if (process.env.JS_RUNTIME) {
+  matcherModule = require("./assembly-glue/js-runtime");
 }
 
 class Router {
