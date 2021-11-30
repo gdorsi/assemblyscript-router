@@ -1,4 +1,4 @@
-import { getLongestCommonPrefix, Node, nodeToString } from "./node";
+import { getLongestCommonPrefix, Node } from "./node";
 import { Params } from "./params";
 import { SanitizeURL } from "./url-sanitizer";
 
@@ -28,7 +28,7 @@ function walkThree(node: Node, url: string, i: i32): i32 {
         return -1;
       }
     } else if (node.params.length) {
-      // TODO optmize, user recursion only when required
+      // TODO optmize, use recursion only when required
       const pSize = Params.size();
 
       for (let p = 0; p < node.params.length; p++) {

@@ -1,7 +1,6 @@
 import { insert } from "./insert";
-import { getLongestCommonPrefix, Node, nodeToString } from "./node";
+import { Node } from "./node";
 import { Params } from "./params";
-import { SanitizeURL } from "./url-sanitizer";
 
 export function create(): Node {
   return new Node("/");
