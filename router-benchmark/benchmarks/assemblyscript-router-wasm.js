@@ -18,7 +18,6 @@ const routes = [
   { method: "GET", url: "/map/:location/events" },
   { method: "GET", url: "/status" },
   { method: "GET", url: "/very/deeply/nested/route/hello/there" },
-  { method: "GET", url: "/static/*" },
 ];
 
 var i = 0;
@@ -60,17 +59,10 @@ print("long static:", time);
 
 time = now();
 for (i = 0; i < operations; i++) {
-  router.lookup("GET", "/static/index.html");
-}
-print("wildcard:", time);
-
-time = now();
-for (i = 0; i < operations; i++) {
   router.lookup("GET", "/user");
   router.lookup("GET", "/user/comments");
   router.lookup("GET", "/user/lookup/username/john%20doe");
   router.lookup("GET", "/event/abcd1234/comments");
   router.lookup("GET", "/very/deeply/nested/route/hello/there");
-  router.lookup("GET", "/static/index.html");
 }
 print("all together:", time);

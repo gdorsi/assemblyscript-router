@@ -50,7 +50,6 @@ function indexOfParamEnd(url: string, start: i32): i32 {
 }
 
 export function insert(root: Node, url: string, id: i32): void {
-  //TODO check if this behvoir matches find-my-way
   if (!url.startsWith("/")) {
     url = "/" + url;
   }
@@ -146,7 +145,7 @@ export function insert(root: Node, url: string, id: i32): void {
     }
   }
 
-  // TODO check how find-my-way duplicates behavoir
+  // TODO check how find-my-way handle duplicates
   // the last node is the route leaf
   node.id = id;
 }

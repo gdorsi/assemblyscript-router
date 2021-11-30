@@ -17,7 +17,6 @@ const routes = [
   { method: 'GET', url: '/map/:location/events' },
   { method: 'GET', url: '/status' },
   { method: 'GET', url: '/very/deeply/nested/route/hello/there' },
-  { method: 'GET', url: '/static/*' }
 ]
 
 function noop () {}
@@ -60,17 +59,10 @@ print('long static:', time)
 
 time = now()
 for (i = 0; i < operations; i++) {
-  router.find('GET', '/static/index.html')
-}
-print('wildcard:', time)
-
-time = now()
-for (i = 0; i < operations; i++) {
   router.find('GET', '/user')
   router.find('GET', '/user/comments')
   router.find('GET', '/user/lookup/username/john%20doe')
   router.find('GET', '/event/abcd1234/comments')
   router.find('GET', '/very/deeply/nested/route/hello/there')
-  router.find('GET', '/static/index.html')
 }
 print('all together:', time)
