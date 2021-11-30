@@ -25,18 +25,7 @@
   },
   "version": "1.0.0",
   "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/delvedor/find-my-way.git"
-  },
   "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/delvedor/find-my-way/issues"
-  },
-  "homepage": "https://github.com/delvedor/find-my-way#readme",
+  "license": "MIT",
   "description": ""
 }
