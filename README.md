@@ -31,7 +31,7 @@ all together: 34,188,648 ops/sec
 
 It seems that the resulting performance are pretty much the same.
 
-Also Assemblyscript doesn't have [builtin Regexp support](https://github.com/AssemblyScript/assemblyscript/issues/1188) that makes an hard job to support RegExps in routes making it not a good candidate for a general purpose JS router.
+Also Assemblyscript doesn't have [builtin Regexp support](https://github.com/AssemblyScript/assemblyscript/issues/1188) that makes an harder job to support RegExps in routes.
 
 Anyway JS code written with the Assemblyscript restictions is pretty damn fast!
 
