@@ -33,7 +33,7 @@ test("lookup dynamic route with trailing slash", (t) => {
 
   const router = new Router();
 
-  router.on("GET", "/example/:name/", function handle(params) {
+  router.on("GET", "/example/:name/", function handle(req, res, params) {
     t.same(params, {
       name: 'guido'
     });
@@ -47,7 +47,7 @@ test("lookup dynamic route", (t) => {
 
   const router = new Router();
 
-  router.on("GET", "/example/:name", function handle(params) {
+  router.on("GET", "/example/:name", function handle(req, res, params) {
     t.same(params, {
       name: 'guido'
     });
@@ -61,7 +61,7 @@ test("lookup dynamic multi-parametric route", (t) => {
 
   const router = new Router();
 
-  router.on("GET", "/example/:name-:surname", function handle(params) {
+  router.on("GET", "/example/:name-:surname", function handle(req, res, params) {
     t.same(params, {
       name: 'guido',
       surname: 'dorsi',

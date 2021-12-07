@@ -1,6 +1,6 @@
 "use strict";
 
-const { title, now, print, operations } = require("../utils");
+const { now, print, operations } = require("../utils");
 
 const routes = [
   { method: "GET", url: "/user" },

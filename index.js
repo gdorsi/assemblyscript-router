@@ -22,14 +22,14 @@ class Router {
     matcherModule.add(router.matcher, url, id);
   }
 
-  find(opts) {
-    const router = this.methods[opts.method];
+  find(req) {
+    const router = this.methods[req.method];
 
     if (router === undefined) {
       return;
     }
 
-    const match = matcherModule.match(router.matcher, opts.url);
+    const match = matcherModule.match(router.matcher, req.url);
 
     if (match.id === -1) {
       return;
@@ -43,11 +43,11 @@ class Router {
     }
   }
 
-  lookup(opts) {
-    const result = this.find(opts);
+  lookup(req, res) {
+    const result = this.find(req);
 
     if (result !== undefined) {
-      result.handler(result.params);
+      result.handler(req, res, result.params);
     }
   }
 }
