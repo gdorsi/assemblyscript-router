@@ -113,3 +113,16 @@ test("doesn't match the url when there isn't any relative route declared", (t) =
 
   t.notOk(matched);
 });
+
+test('lookup calls default route handler with no context', t => {
+  t.plan(1)
+
+  const router = Router({
+    defaultRoute (req, res) {
+      // without context, the default route's scope is the router itself
+      t.equal(this, router)
+    }
+  })
+
+  router.lookup({ method: 'GET', url: '/example', headers: {} }, null)
+})

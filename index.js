@@ -7,6 +7,10 @@ if (process.env.JS_RUNTIME) {
 class Router {
   methods = {};
 
+  constructor(opts = {}) {
+    this.defaultRoute = opts.defaultRoute;
+  }
+
   on(method, url, handler) {
     if (!this.methods[method]) {
       this.methods[method] = {
@@ -48,12 +52,14 @@ class Router {
 
     if (result !== undefined) {
       result.handler(req, res, result.params);
+    } else if (this.defaultRoute !== undefined) {
+      this.defaultRoute(req, res);
     }
   }
 }
 
-function instance() {
-  return new Router()
+function instance(opts) {
+  return new Router(opts)
 }
 
 module.exports = instance;
