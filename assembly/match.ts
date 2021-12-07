@@ -1,4 +1,4 @@
-import { getLongestCommonPrefix, Node } from "./node";
+import { getLongestCommonPrefix, Node, nodeToString } from "./node";
 import { Params } from "./params";
 import { SanitizeURL } from "./url-sanitizer";
 
@@ -34,7 +34,12 @@ function walkThree(node: Node, url: string, i: i32): i32 {
       for (let p = 0; p < node.params.length; p++) {
         const child = node.params[p];
 
-        const k = Params.read(child, url, i, SanitizeURL.hasEncodedComponents());
+        const k = Params.read(
+          child,
+          url,
+          i,
+          SanitizeURL.hasEncodedComponents()
+        );
 
         if (k === url.length) {
           return child.id;
@@ -48,6 +53,18 @@ function walkThree(node: Node, url: string, i: i32): i32 {
 
         // delete the read params
         Params.setSize(pSize);
+      }
+
+      return -1;
+    } else if (node.wildcards.length) {
+      node = node.wildcards[0];
+
+      while (i < url.length && url.charCodeAt(i) !== node.delimiterCharCode) {
+        i++;
+      }
+
+      if (i === url.length) {
+        return node.id
       }
     } else {
       return -1;

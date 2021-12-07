@@ -25,12 +25,12 @@ export namespace Params {
   export function get(): Array<string> {
     return params;
   }
-  
+
   // @inline
   export function size(): i32 {
     return paramsSize;
   }
-  
+
   // @inline
   export function setSize(value: i32): void {
     paramsSize = value;
@@ -42,21 +42,26 @@ export namespace Params {
   }
 
   // @inline
-  export function read(node: Node, url: string, start: i32, decode: boolean): i32 {
+  export function read(
+    node: Node,
+    url: string,
+    start: i32,
+    decode: boolean
+  ): i32 {
     let k = start;
 
-      while (k < url.length && url.charCodeAt(k) !== node.paramEndCharCode) {
-        k++;
-      }
+    while (k < url.length && url.charCodeAt(k) !== node.delimiterCharCode) {
+      k++;
+    }
 
-      let value = url.slice(start, k);
+    let value = url.slice(start, k);
 
-      if (decode) {
-        value = decodeURIComponent(value)
-      }
+    if (decode) {
+      value = decodeURIComponent(value);
+    }
 
-      add(node.paramKey, value);
+    add(node.paramName, value);
 
-      return k;
+    return k;
   }
 }

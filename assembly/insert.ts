@@ -2,21 +2,26 @@ import { getLongestCommonPrefix, Node, NodeType } from "./node";
 
 // @inline
 function getNodeTypeFromCharCode(code: i32): NodeType {
-  return code == 58 /*:*/ ? NodeType.PARAM : NodeType.STATIC;
+  return code == 58 /*':'*/
+    ? NodeType.PARAM
+    : code == 42 /*'*'*/
+    ? NodeType.WILDCARD
+    : NodeType.STATIC;
 }
 
 // @inline
-function indexOfParamStart(url: string, start: i32): i32 {
+function nextDynamicDelimiter(url: string, start: i32): i32 {
   let i = start;
 
   /*
     Char codes:
+    '*': 42
     ':': 58
   */
   while (i < url.length) {
     const charCode = url.charCodeAt(i);
 
-    if (charCode == 58) {
+    if (charCode == 58 || charCode == 42) {
       return i;
     }
 
@@ -27,7 +32,7 @@ function indexOfParamStart(url: string, start: i32): i32 {
 }
 
 // @inline
-function indexOfParamEnd(url: string, start: i32): i32 {
+function nextStaticDelimiter(url: string, start: i32): i32 {
   let i = start;
 
   /*
@@ -91,7 +96,7 @@ export function insert(root: Node, url: string, id: i32): void {
         break;
       }
     } else if (type == NodeType.PARAM) {
-      const name = url.slice(i, indexOfParamEnd(url, i));
+      const name = url.slice(i, nextStaticDelimiter(url, i));
 
       let childIndex = -1;
 
@@ -108,20 +113,23 @@ export function insert(root: Node, url: string, id: i32): void {
         node = child;
         i += child.label.length;
         // not found, break
-      } else {
-        break;
       }
+    } else if (type == NodeType.WILDCARD && node.wildcards.length > 0) {
+      node = node.wildcards[0];
+      i += 1;
+    } else {
+      break;
     }
   }
 
-  // create the new nodes 
+  // create the new nodes
   while (i < url.length) {
     const key = url.charCodeAt(i);
     const current = getNodeTypeFromCharCode(key);
 
     switch (current) {
       case NodeType.STATIC: {
-        const end = indexOfParamStart(url, i);
+        const end = nextDynamicDelimiter(url, i);
         const child = new Node(url.slice(i, end));
 
         node.children.set(child.key, child);
@@ -130,16 +138,37 @@ export function insert(root: Node, url: string, id: i32): void {
         break;
       }
       case NodeType.PARAM: {
-        const end = indexOfParamEnd(url, i);
+        const end = nextStaticDelimiter(url, i);
         const child = new Node(url.slice(i, end));
         child.type = NodeType.PARAM;
-        child.paramEndCharCode = url.charCodeAt(end);
-        child.paramKey = child.label.slice(1);
 
-        // TODO sort
+        if (end < url.length) {
+          child.delimiterCharCode = url.charCodeAt(end);
+        } else {
+          child.delimiterCharCode = 47; // '/'
+        }
+
+        child.paramName = child.label.slice(1);
+
         node.params.push(child);
         node = child;
         i = end;
+        break;
+      }
+      case NodeType.WILDCARD: {
+        const child = new Node(url.slice(i, i + 1));
+        child.type = NodeType.PARAM;
+
+        i += 1;
+
+        if (i < url.length) {
+          child.delimiterCharCode = url.charCodeAt(i);
+        } else {
+          child.delimiterCharCode = -1;
+        }
+
+        node.wildcards.push(child);
+        node = child;
         break;
       }
     }

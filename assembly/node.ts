@@ -1,6 +1,7 @@
 export enum NodeType {
   STATIC = 0,
   PARAM = 1,
+  WILDCARD = 2,
 }
 
 export class Node {
@@ -9,10 +10,10 @@ export class Node {
   key: i32;
   children: Map<number, Node> = new Map<number, Node>();
   params: Array<Node> = new Array<Node>(0);
+  wildcards: Array<Node> = new Array<Node>(0);
   type: NodeType = NodeType.STATIC;
-  paramKey: string = "";
-
-  paramEndCharCode: i32 = 47 /* '/' */;
+  paramName: string = "";
+  delimiterCharCode: i32 = -1;
 
   constructor(label: string, id: i32 = -1) {
     this.id = id;
