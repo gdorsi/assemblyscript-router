@@ -77,9 +77,12 @@ export function match(routes: Node, url: string): i32 {
 
   Params.reset();
 
-  if (routes.label == url) {
+  if (routes.label == url || url == '') {
     return routes.id;
   }
 
-  return walkThree(routes, url, 1);
+  // TODO verify if this is correct
+  const start = url.charCodeAt(0) == 47 ? 1 : 0
+
+  return walkThree(routes, url, start);
 }

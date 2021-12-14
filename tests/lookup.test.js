@@ -126,3 +126,27 @@ test('lookup calls default route handler with no context', t => {
 
   router.lookup({ method: 'GET', url: '/example', headers: {} }, null)
 })
+
+test("lookup root", (t) => {
+  t.plan(1);
+
+  const router = new Router();
+
+  router.on("GET", "/", function handle() {
+    t.ok(true);
+  });
+
+  router.lookup({ method: "GET", url: "", headers: {} }, null);
+});
+
+test("lookup wildcard", (t) => {
+  t.plan(1);
+
+  const router = new Router();
+
+  router.on("GET", "*", function handle() {
+    t.ok(true);
+  });
+
+  router.lookup({ method: "GET", url: "something", headers: {} }, null);
+});

@@ -48,7 +48,7 @@ export namespace SanitizeURL {
     let originPath = url;
     let highChar: i32 = -1;
     let lowChar: i32 = -1;
-  
+
     for (var i = 0, len = url.length; i < len; i++) {
       var charCode = url.charCodeAt(i);
 
@@ -79,6 +79,7 @@ export namespace SanitizeURL {
         highChar = 0x00;
       }
     }
+
     return shouldDecode ? decodeURI(originPath) : originPath;
   }
 }

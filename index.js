@@ -1,6 +1,8 @@
+const http = require("http");
+
 let matcherModule = require("./assembly-glue/wasm-runtime");
 
-if (process.env.JS_RUNTIME) {
+if (process.env.JS_RUNTIME || true) {
   matcherModule = require("./assembly-glue/js-runtime");
 }
 
@@ -9,9 +11,27 @@ class Router {
 
   constructor(opts = {}) {
     this.defaultRoute = opts.defaultRoute;
+    this.onBadUrl = opts.onBadUrl;
   }
 
-  on(method, url, handler) {
+  prettyPrint() {
+    throw new Error("Not implemented yet");
+  }
+
+  on(method, url, opts, handler, store) {
+    if (Array.isArray(method)) {
+      for (var k = 0; k < method.length; k++) {
+        this.on(method[k], url, opts, handler);
+      }
+      return;
+    }
+
+    if (typeof opts === "function") {
+      store = handler;
+      handler = opts;
+      opts = undefined;
+    }
+
     if (!this.methods[method]) {
       this.methods[method] = {
         matcher: matcherModule.create(),
@@ -22,7 +42,7 @@ class Router {
     const router = this.methods[method];
     const id = router.routes.length;
 
-    router.routes.push({ url, handler });
+    router.routes.push({ url, handler, store });
     matcherModule.add(router.matcher, url, id);
   }
 
@@ -35,31 +55,69 @@ class Router {
 
     const match = matcherModule.match(router.matcher, req.url);
 
+    // TODO this is a dead branch ATM
+    if (match.id === -2) {
+      if (this.onBadUrl === null) {
+        return null;
+      }
+
+      const onBadUrl = this.onBadUrl;
+
+      return {
+        handler: (req, res, ctx) => onBadUrl(req.url, req, res),
+        params: {},
+        store: null,
+      };
+    }
+
     if (match.id === -1) {
       return;
     }
 
-    const handler = router.routes[match.id].handler;
+    const route = router.routes[match.id];
 
     return {
-      handler,
+      handler: route.handler,
       params: match.params,
-    }
+      store: route.store,
+    };
   }
 
-  lookup(req, res) {
+  lookup(req, res, ctx) {
     const result = this.find(req);
 
     if (result !== undefined) {
-      result.handler(req, res, result.params);
+      if (ctx === undefined) {
+        return result.handler(req, res, result.params, result.store);
+      } else {
+        return result.handler.call(ctx, req, res, result.params, result.store);
+      }
     } else if (this.defaultRoute !== undefined) {
-      this.defaultRoute(req, res);
+      return this.defaultRoute(req, res, ctx);
     }
   }
 }
 
+for (var i in http.METHODS) {
+  /* eslint no-prototype-builtins: "off" */
+  if (!http.METHODS.hasOwnProperty(i)) continue;
+  const m = http.METHODS[i];
+  const methodName = m.toLowerCase();
+
+  if (Router.prototype[methodName])
+    throw new Error("Method already exists: " + methodName);
+
+  Router.prototype[methodName] = function (path, handler, store) {
+    return this.on(m, path, handler, store);
+  };
+}
+
+Router.prototype.all = function (path, handler, store) {
+  this.on(httpMethods, path, handler, store);
+};
+
 function instance(opts) {
-  return new Router(opts)
+  return new Router(opts);
 }
 
 module.exports = instance;
