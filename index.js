@@ -2,7 +2,7 @@ const http = require("http");
 
 let matcherModule = require("./assembly-glue/wasm-runtime");
 
-if (process.env.JS_RUNTIME || true) {
+if (process.env.JS_RUNTIME) {
   matcherModule = require("./assembly-glue/js-runtime");
 }
 
@@ -46,29 +46,14 @@ class Router {
     matcherModule.add(router.matcher, url, id);
   }
 
-  find(req) {
-    const router = this.methods[req.method];
+  find(method, url) {
+    const router = this.methods[method];
 
     if (router === undefined) {
       return;
     }
 
-    const match = matcherModule.match(router.matcher, req.url);
-
-    // TODO this is a dead branch ATM
-    if (match.id === -2) {
-      if (this.onBadUrl === null) {
-        return null;
-      }
-
-      const onBadUrl = this.onBadUrl;
-
-      return {
-        handler: (req, res, ctx) => onBadUrl(req.url, req, res),
-        params: {},
-        store: null,
-      };
-    }
+    const match = matcherModule.match(router.matcher, url);
 
     if (match.id === -1) {
       return;

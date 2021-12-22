@@ -2,7 +2,7 @@
 
 const chalk = require('chalk')
 
-const operations = 10000000
+const operations = 5000000
 
 function now () {
   var ts = process.hrtime()
