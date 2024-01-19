@@ -5,7 +5,7 @@ const imports = {
 };
 const wasmModule = loader.instantiateSync(
   process.env.NODE_ENV === "development"
-    ? fs.readFileSync(__dirname + "/../build/untouched.wasm")
+    ? fs.readFileSync(__dirname + "/../build/debug.wasm")
     : fs.readFileSync(__dirname + "/../build/release.wasm"),
   imports
 );
